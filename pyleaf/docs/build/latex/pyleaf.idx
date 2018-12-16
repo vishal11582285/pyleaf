@@ -1,15 +1,41 @@
-\indexentry{basefunctions (module)@\spxentry{basefunctions}\spxextra{module}|hyperpage}{3}
-\indexentry{CNNModel() (in module basefunctions)@\spxentry{CNNModel()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{PROCESS\_IMAGE() (in module basefunctions)@\spxentry{PROCESS\_IMAGE()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{RETRAIN\_MODEL\_FROM\_SCRATCH() (in module basefunctions)@\spxentry{RETRAIN\_MODEL\_FROM\_SCRATCH()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{alter\_calc() (in module basefunctions)@\spxentry{alter\_calc()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{generateClassLabels() (in module basefunctions)@\spxentry{generateClassLabels()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{getPixelFromLabel() (in module basefunctions)@\spxentry{getPixelFromLabel()}\spxextra{in module basefunctions}|hyperpage}{3}
-\indexentry{image\_area\_calculator() (in module basefunctions)@\spxentry{image\_area\_calculator()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{kerasTokenizerUnit() (in module basefunctions)@\spxentry{kerasTokenizerUnit()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{load\_model() (in module basefunctions)@\spxentry{load\_model()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{processInputTrain() (in module basefunctions)@\spxentry{processInputTrain()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{readFromDisk() (in module basefunctions)@\spxentry{readFromDisk()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{regular() (in module basefunctions)@\spxentry{regular()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{saveModelToDisk() (in module basefunctions)@\spxentry{saveModelToDisk()}\spxextra{in module basefunctions}|hyperpage}{4}
-\indexentry{saveToDisk() (in module basefunctions)@\spxentry{saveToDisk()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{pyleaf.basefunctions (module)@\spxentry{pyleaf.basefunctions}\spxextra{module}|hyperpage}{1}
+\indexentry{CNNModel() (in module pyleaf.basefunctions)@\spxentry{CNNModel()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{1}
+\indexentry{PROCESS\_IMAGE() (in module pyleaf.basefunctions)@\spxentry{PROCESS\_IMAGE()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{1}
+\indexentry{RETRAIN\_MODEL\_FROM\_SCRATCH() (in module pyleaf.basefunctions)@\spxentry{RETRAIN\_MODEL\_FROM\_SCRATCH()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{1}
+\indexentry{alter\_calc() (in module pyleaf.basefunctions)@\spxentry{alter\_calc()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{1}
+\indexentry{generateClassLabels() (in module pyleaf.basefunctions)@\spxentry{generateClassLabels()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{1}
+\indexentry{getPixelFromLabel() (in module pyleaf.basefunctions)@\spxentry{getPixelFromLabel()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{image\_area\_calculator() (in module pyleaf.basefunctions)@\spxentry{image\_area\_calculator()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{kerasTokenizerUnit() (in module pyleaf.basefunctions)@\spxentry{kerasTokenizerUnit()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{load\_model() (in module pyleaf.basefunctions)@\spxentry{load\_model()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{processInputTrain() (in module pyleaf.basefunctions)@\spxentry{processInputTrain()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{readFromDisk() (in module pyleaf.basefunctions)@\spxentry{readFromDisk()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{regular() (in module pyleaf.basefunctions)@\spxentry{regular()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{saveModelToDisk() (in module pyleaf.basefunctions)@\spxentry{saveModelToDisk()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{saveToDisk() (in module pyleaf.basefunctions)@\spxentry{saveToDisk()}\spxextra{in module pyleaf.basefunctions}|hyperpage}{2}
+\indexentry{pyleaf.leaf\_area\_calculator\_gui (module)@\spxentry{pyleaf.leaf\_area\_calculator\_gui}\spxextra{module}|hyperpage}{3}
+\indexentry{LeafAreaCalculatorGUI (class in pyleaf.leaf\_area\_calculator\_gui)@\spxentry{LeafAreaCalculatorGUI}\spxextra{class in pyleaf.leaf\_area\_calculator\_gui}|hyperpage}{3}
+\indexentry{About() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{About()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{IMAGE\_HEIGHT (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute)@\spxentry{IMAGE\_HEIGHT}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute}|hyperpage}{3}
+\indexentry{IMAGE\_WIDTH (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute)@\spxentry{IMAGE\_WIDTH}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute}|hyperpage}{3}
+\indexentry{answer() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{answer()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{change\_progress() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_progress()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{change\_result\_preview() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_result\_preview()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{change\_unit() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_unit()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{display\_left() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_left()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{display\_result() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_result()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{display\_right() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_right()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{3}
+\indexentry{display\_this\_image() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_this\_image()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{documentation() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{documentation()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{new\_winF() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{new\_winF()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{process\_all() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{process\_all()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{process\_image() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{process\_image()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{reset\_workspace() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{reset\_workspace()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{retrain\_model() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{retrain\_model()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{retrain\_model\_run() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{retrain\_model\_run()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{setDefaultImageLocation() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{setDefaultImageLocation()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{set\_grid() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{set\_grid()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{set\_menus() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{set\_menus()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{update\_original\_preview() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{update\_original\_preview()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{view\_results() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{view\_results()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}|hyperpage}{4}
+\indexentry{pyleaf (module)@\spxentry{pyleaf}\spxextra{module}|hyperpage}{5}

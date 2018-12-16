@@ -66,21 +66,26 @@
 \sphinxtableofcontents
 \pagestyle{normal}
 \phantomsection\label{\detokenize{index::doc}}
-sphinx-quickstart on Mon Dec  3 19:04:20 2018.
-You can adapt this file completely to your liking, but it should at least
-contain the root \sphinxtitleref{toctree} directive.
 
 
 
+\chapter{pyleaf}
+\label{\detokenize{modules:pyleaf}}\label{\detokenize{modules::doc}}
 
-\chapter{LeafAreaCalculator}
-\label{\detokenize{modules:leafareacalculator}}\label{\detokenize{modules::doc}}
+\section{pyleaf package}
+\label{\detokenize{pyleaf:pyleaf-package}}\label{\detokenize{pyleaf::doc}}
 
-\section{basefunctions module}
-\label{\detokenize{basefunctions:module-basefunctions}}\label{\detokenize{basefunctions:basefunctions-module}}\label{\detokenize{basefunctions::doc}}\index{basefunctions (module)@\spxentry{basefunctions}\spxextra{module}}\index{CNNModel() (in module basefunctions)@\spxentry{CNNModel()}\spxextra{in module basefunctions}}
+\subsection{Subpackages}
+\label{\detokenize{pyleaf:subpackages}}
+
+\subsection{Submodules}
+\label{\detokenize{pyleaf:submodules}}
+
+\subsubsection{pyleaf.basefunctions module}
+\label{\detokenize{pyleaf.basefunctions:module-pyleaf.basefunctions}}\label{\detokenize{pyleaf.basefunctions:pyleaf-basefunctions-module}}\label{\detokenize{pyleaf.basefunctions::doc}}\index{pyleaf.basefunctions (module)@\spxentry{pyleaf.basefunctions}\spxextra{module}}\index{CNNModel() (in module pyleaf.basefunctions)@\spxentry{CNNModel()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.CNNModel}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{CNNModel}}}{}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.CNNModel}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{CNNModel}}}{}{}
 Convolutional Neural network model.
 Input is 256 vector input dimensional array as Embedding layer.
 Additional layers: Conv1d, MaxPooling, Dense, Flatten,Dense.
@@ -97,10 +102,10 @@ keras.model
 
 \end{fulllineitems}
 
-\index{PROCESS\_IMAGE() (in module basefunctions)@\spxentry{PROCESS\_IMAGE()}\spxextra{in module basefunctions}}
+\index{PROCESS\_IMAGE() (in module pyleaf.basefunctions)@\spxentry{PROCESS\_IMAGE()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.PROCESS_IMAGE}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{PROCESS\_IMAGE}}}{\emph{sample\_name\_list}, \emph{path\_}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.PROCESS_IMAGE}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{PROCESS\_IMAGE}}}{\emph{sample\_name\_list}, \emph{path\_}}{}
 Accept the image file name from LeafAreaCalculator and prcoess the passed image by cobverting it to model input vector and processing all pixels in the image.
 CNN model ouptput class color labels for every pixel. Simple math is then used to calculate leaf area(green pixels) from green:red ratio of all classified labels.
 \begin{quote}\begin{description}
@@ -123,18 +128,18 @@ List
 
 \end{fulllineitems}
 
-\index{RETRAIN\_MODEL\_FROM\_SCRATCH() (in module basefunctions)@\spxentry{RETRAIN\_MODEL\_FROM\_SCRATCH()}\spxextra{in module basefunctions}}
+\index{RETRAIN\_MODEL\_FROM\_SCRATCH() (in module pyleaf.basefunctions)@\spxentry{RETRAIN\_MODEL\_FROM\_SCRATCH()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.RETRAIN_MODEL_FROM_SCRATCH}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{RETRAIN\_MODEL\_FROM\_SCRATCH}}}{}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.RETRAIN_MODEL_FROM_SCRATCH}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{RETRAIN\_MODEL\_FROM\_SCRATCH}}}{}{}
 Retrain the CNN model process entirely from scratch. This is action taken when use uses Tools-\textgreater{}Retrain model from GUI menu.
 
 \end{fulllineitems}
 
-\index{alter\_calc() (in module basefunctions)@\spxentry{alter\_calc()}\spxextra{in module basefunctions}}
+\index{alter\_calc() (in module pyleaf.basefunctions)@\spxentry{alter\_calc()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.alter_calc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{alter\_calc}}}{\emph{image}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.alter_calc}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{alter\_calc}}}{\emph{image}}{}
 EXtract pixel level information from the passed image. Retrieved (r,g,b) pixel values for every pixel of the image and convert them to hsv values,
 for easier seperation of green colored pixels.
 \begin{quote}\begin{description}
@@ -151,20 +156,20 @@ List of tuples
 
 \end{fulllineitems}
 
-\index{generateClassLabels() (in module basefunctions)@\spxentry{generateClassLabels()}\spxextra{in module basefunctions}}
+\index{generateClassLabels() (in module pyleaf.basefunctions)@\spxentry{generateClassLabels()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.generateClassLabels}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{generateClassLabels}}}{\emph{sample}, \emph{color}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.generateClassLabels}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{generateClassLabels}}}{\emph{sample}, \emph{color}}{}
 Generates class labels for all the pixels extracted from an image.
 Example: if red.png was fetched, all pixels of this image are labelled ‘red’. Likewise, for all images in the default training folder (test\_images/)
 In our default environment, we have green for all kinds of leaf images, red for all red squared, and any other is irrelevant to pur computations.
 
 \end{fulllineitems}
 
-\index{getPixelFromLabel() (in module basefunctions)@\spxentry{getPixelFromLabel()}\spxextra{in module basefunctions}}
+\index{getPixelFromLabel() (in module pyleaf.basefunctions)@\spxentry{getPixelFromLabel()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.getPixelFromLabel}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{getPixelFromLabel}}}{\emph{label}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.getPixelFromLabel}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{getPixelFromLabel}}}{\emph{label}}{}
 Function to get the pizel from the class label. This reverse mapping is use to generate an image file fom available class labels.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
@@ -180,10 +185,10 @@ Function to get the pizel from the class label. This reverse mapping is use to g
 
 \end{fulllineitems}
 
-\index{image\_area\_calculator() (in module basefunctions)@\spxentry{image\_area\_calculator()}\spxextra{in module basefunctions}}
+\index{image\_area\_calculator() (in module pyleaf.basefunctions)@\spxentry{image\_area\_calculator()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.image_area_calculator}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{image\_area\_calculator}}}{\emph{basepath}, \emph{sample}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.image_area_calculator}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{image\_area\_calculator}}}{\emph{basepath}, \emph{sample}}{}
 Process the desired image, and extract the pixel level information of every pixel in the image in (h,s,v) format.
 Utlizes alter\_calc method to generate (h,s,v) values.
 \begin{quote}\begin{description}
@@ -206,10 +211,10 @@ list of lists
 
 \end{fulllineitems}
 
-\index{kerasTokenizerUnit() (in module basefunctions)@\spxentry{kerasTokenizerUnit()}\spxextra{in module basefunctions}}
+\index{kerasTokenizerUnit() (in module pyleaf.basefunctions)@\spxentry{kerasTokenizerUnit()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.kerasTokenizerUnit}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{kerasTokenizerUnit}}}{\emph{topbestwords}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.kerasTokenizerUnit}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{kerasTokenizerUnit}}}{\emph{topbestwords}}{}
 Convert the (h,s,v) value of every pixel to a 256 dimensional feature vector that serves as an input to the CNN EMbedding layer.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
@@ -223,34 +228,34 @@ Convert the (h,s,v) value of every pixel to a 256 dimensional feature vector tha
 
 \end{fulllineitems}
 
-\index{load\_model() (in module basefunctions)@\spxentry{load\_model()}\spxextra{in module basefunctions}}
+\index{load\_model() (in module pyleaf.basefunctions)@\spxentry{load\_model()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.load_model}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{load\_model}}}{}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.load_model}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{load\_model}}}{}{}
 Loads the already available model previously saved on disk.
 
 \end{fulllineitems}
 
-\index{processInputTrain() (in module basefunctions)@\spxentry{processInputTrain()}\spxextra{in module basefunctions}}
+\index{processInputTrain() (in module pyleaf.basefunctions)@\spxentry{processInputTrain()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.processInputTrain}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{processInputTrain}}}{}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.processInputTrain}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{processInputTrain}}}{}{}
 Function that extracts all training images from default traininf images foled (test\_images/) and converts them into required input vector format for CNN embedding layer.
 
 \end{fulllineitems}
 
-\index{readFromDisk() (in module basefunctions)@\spxentry{readFromDisk()}\spxextra{in module basefunctions}}
+\index{readFromDisk() (in module pyleaf.basefunctions)@\spxentry{readFromDisk()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.readFromDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{readFromDisk}}}{}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.readFromDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{readFromDisk}}}{}{}
 Reads the previously sored pixel/class label values saved as pickled objects.
 
 \end{fulllineitems}
 
-\index{regular() (in module basefunctions)@\spxentry{regular()}\spxextra{in module basefunctions}}
+\index{regular() (in module pyleaf.basefunctions)@\spxentry{regular()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.regular}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{regular}}}{\emph{string\_list}, \emph{class\_labels\_norm}, \emph{finalSequence\_}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.regular}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{regular}}}{\emph{string\_list}, \emph{class\_labels\_norm}, \emph{finalSequence\_}}{}
 Trains CNN model with the passed embedding vectors of the image.
 CNN model is trained with 600*600 image dimesions, so 360000 data pointes per training image, for all images in default training images directory, for 10 iterations.
 Note: At the time of documenting, the acuarcy of model achieved was 99.5\%.
@@ -271,10 +276,10 @@ Note: At the time of documenting, the acuarcy of model achieved was 99.5\%.
 
 \end{fulllineitems}
 
-\index{saveModelToDisk() (in module basefunctions)@\spxentry{saveModelToDisk()}\spxextra{in module basefunctions}}
+\index{saveModelToDisk() (in module pyleaf.basefunctions)@\spxentry{saveModelToDisk()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.saveModelToDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{saveModelToDisk}}}{\emph{model}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.saveModelToDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{saveModelToDisk}}}{\emph{model}}{}
 Saves the currenly used CNN model configuration to disk.
 \begin{quote}\begin{description}
 \item[{Parameters}] \leavevmode
@@ -284,18 +289,278 @@ Saves the currenly used CNN model configuration to disk.
 
 \end{fulllineitems}
 
-\index{saveToDisk() (in module basefunctions)@\spxentry{saveToDisk()}\spxextra{in module basefunctions}}
+\index{saveToDisk() (in module pyleaf.basefunctions)@\spxentry{saveToDisk()}\spxextra{in module pyleaf.basefunctions}}
 
 \begin{fulllineitems}
-\phantomsection\label{\detokenize{basefunctions:basefunctions.saveToDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{basefunctions.}}\sphinxbfcode{\sphinxupquote{saveToDisk}}}{\emph{string\_list}, \emph{class\_labels\_norm}, \emph{finalSequence\_}}{}
+\phantomsection\label{\detokenize{pyleaf.basefunctions:pyleaf.basefunctions.saveToDisk}}\pysiglinewithargsret{\sphinxcode{\sphinxupquote{pyleaf.basefunctions.}}\sphinxbfcode{\sphinxupquote{saveToDisk}}}{\emph{string\_list}, \emph{class\_labels\_norm}, \emph{finalSequence\_}}{}
 Saves CNN model configuration and input/output pixel/class\_label values to disk for later use. Utilizes pickle objects for compressed serialized storage.
 
 \end{fulllineitems}
 
 
 
-\section{leaf\_area\_calculator\_gui module}
-\label{\detokenize{leaf_area_calculator_gui:leaf-area-calculator-gui-module}}\label{\detokenize{leaf_area_calculator_gui::doc}}
+\subsubsection{pyleaf.leaf\_area\_calculator\_gui module}
+\label{\detokenize{pyleaf.leaf_area_calculator_gui:module-pyleaf.leaf_area_calculator_gui}}\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf-leaf-area-calculator-gui-module}}\label{\detokenize{pyleaf.leaf_area_calculator_gui::doc}}\index{pyleaf.leaf\_area\_calculator\_gui (module)@\spxentry{pyleaf.leaf\_area\_calculator\_gui}\spxextra{module}}\index{LeafAreaCalculatorGUI (class in pyleaf.leaf\_area\_calculator\_gui)@\spxentry{LeafAreaCalculatorGUI}\spxextra{class in pyleaf.leaf\_area\_calculator\_gui}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{class }}\sphinxcode{\sphinxupquote{pyleaf.leaf\_area\_calculator\_gui.}}\sphinxbfcode{\sphinxupquote{LeafAreaCalculatorGUI}}}{\emph{root}}{}
+Bases: \sphinxhref{https://docs.python.org/3/library/functions.html\#object}{\sphinxcode{\sphinxupquote{object}}}
+
+Class LeafAreaCalculatorGUI is a Tkinter GUI manager, that is responsible for interacting with the user
+and displaying results.
+The backend application is a convulutional neural network that is trained with green, red and other colors,
+to generate a robust and reliable classifier that can detect green leaf within a given image in varying light conditions and leaf shades,
+and computes the area of the green leaf with respect to a fixed red square of 4 cm\textasciicircum{}2.
+
+GUI includes two preview panes:
+left pane is the original window pane, that displays the original image and the name of image.
+right pane is the updated window pane, that displays the resultant analyzd image from classifier.
+
+Under the left pane is a navigation bar, with which user can switch left or right through multiple images. This option is diabled if user is working on only one image.
+\index{About() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{About()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.About}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{About}}}{}{}
+Displays the File-\textgreater{}About pop up box.
+
+\end{fulllineitems}
+
+\index{IMAGE\_HEIGHT (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute)@\spxentry{IMAGE\_HEIGHT}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.IMAGE_HEIGHT}}\pysigline{\sphinxbfcode{\sphinxupquote{IMAGE\_HEIGHT}}\sphinxbfcode{\sphinxupquote{ = 300}}}
+\end{fulllineitems}
+
+\index{IMAGE\_WIDTH (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute)@\spxentry{IMAGE\_WIDTH}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI attribute}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.IMAGE_WIDTH}}\pysigline{\sphinxbfcode{\sphinxupquote{IMAGE\_WIDTH}}\sphinxbfcode{\sphinxupquote{ = 300}}}
+\end{fulllineitems}
+
+\index{answer() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{answer()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.answer}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{answer}}}{\emph{x}}{}
+Allows user to select base image path from where all images in that folder can be polled for batch analysis.
+When user selects the default folder through the dialog box, all images in the selected folder are loaded in the original preview pane.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{x}} (\sphinxstyleliteralemphasis{\sphinxupquote{Tk}}\sphinxstyleliteralemphasis{\sphinxupquote{(}}\sphinxstyleliteralemphasis{\sphinxupquote{)}}) \textendash{} Tkinter Instance of main window or root
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{change\_progress() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_progress()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_progress}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{change\_progress}}}{}{}
+Update the progress value in the progress window.
+
+\end{fulllineitems}
+
+\index{change\_result\_preview() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_result\_preview()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_result_preview}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{change\_result\_preview}}}{\emph{every}}{}
+Update the result window pane with the passed image.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{every}} (\sphinxstyleliteralemphasis{\sphinxupquote{string}}) \textendash{} name of the image file to load.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{change\_unit() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{change\_unit()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_unit}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{change\_unit}}}{\emph{event}}{}
+Function that allows the numerical leaf area result to switch between cm\textasciicircum{}2 and mm\textasciicircum{}2.
+The result is displayed in Leaf Area label field.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{event}} (\sphinxstyleliteralemphasis{\sphinxupquote{Tkinter Button Press 1.}}) \textendash{} Accept the button click event.
+
+\item[{Returns}] \leavevmode
+Return ‘NA’ back if ‘NA’ is clicked.
+
+\item[{Return type}] \leavevmode
+\sphinxhref{https://docs.python.org/3/library/functions.html\#int}{int}
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{display\_left() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_left()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_left}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{display\_left}}}{}{}
+The Left Arrow button of the navigation control under original preview pane.
+Disabled if navigation reaches 1/N , Enabled otherwise.
+
+\end{fulllineitems}
+
+\index{display\_result() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_result()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_result}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{display\_result}}}{\emph{area=None}}{}
+Displays the area in cm\textasciicircum{}2 with an option to switch to mm\textasciicircum{}2 by clicking on the numerical result displayed.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{area}} (\sphinxhref{https://docs.python.org/3/library/functions.html\#float}{\sphinxstyleliteralemphasis{\sphinxupquote{float}}}\sphinxstyleliteralemphasis{\sphinxupquote{, }}\sphinxstyleliteralemphasis{\sphinxupquote{2 bit decimal.}}) \textendash{} The area to display in the ‘Leaf Area:’  field.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{display\_right() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_right()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_right}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{display\_right}}}{}{}
+The Right Arrow button of the navigation control under original preview pane.
+Disabled if navigation reaches N/N , Enabled otherwise.
+
+\end{fulllineitems}
+
+\index{display\_this\_image() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{display\_this\_image()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_this_image}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{display\_this\_image}}}{\emph{passed\_image}}{}
+Function that collects a passed image from disk and displays in the original preview window and updated result window.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{passed\_image}} \textendash{} The image name to be fetched from default\_image\_path and default\_save\_path
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{documentation() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{documentation()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.documentation}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{documentation}}}{}{}
+\end{fulllineitems}
+
+\index{new\_winF() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{new\_winF()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.new_winF}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{new\_winF}}}{}{}
+Function that creates a progress window to display progress of leaf analysis with multiple images.
+A new window updates the status with analysis of every leaf in the default\_image\_folder, and closes automatically when program processes all images.
+
+The window is positioned to be in the centre of the main window.
+
+\end{fulllineitems}
+
+\index{process\_all() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{process\_all()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.process_all}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{process\_all}}}{}{}
+Function that is triggered when Batch Process feature is activated by user.
+Iterate over all images one by one from the list of images in default\_image\_path, and update the Leaf Area and preview panes as the results become available.
+While the operation is in progress, new window is popped that displays dynamic progress of task.
+
+\end{fulllineitems}
+
+\index{process\_image() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{process\_image()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.process_image}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{process\_image}}}{\emph{every=None}}{}
+Function that accepts only one image name as input, and performs analysis.
+Updates the Leaf Area and preview panes as the result become available. If no input is provides, iteratively processes all images in the global {\color{red}\bfseries{}list\_} maintained by class as list of all
+images in the default image path.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{every}} (\sphinxstyleliteralemphasis{\sphinxupquote{string}}) \textendash{} Image name to process
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{reset\_workspace() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{reset\_workspace()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.reset_workspace}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{reset\_workspace}}}{}{}
+Resets the workspace to defaults. This provides a fresh GUI configuration to user.
+Clears all images in the default save path directory.
+
+\end{fulllineitems}
+
+\index{retrain\_model() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{retrain\_model()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.retrain_model}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{retrain\_model}}}{}{}
+Function retrain\_model: Performs re-training of the classifier on user input from Tools-\textgreater{}Retrain model.
+Note: User should retrain the model only if training images have changed, or classification model seems corrupt.
+
+\end{fulllineitems}
+
+\index{retrain\_model\_run() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{retrain\_model\_run()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.retrain_model_run}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{retrain\_model\_run}}}{}{}
+Function retrain\_model\_run: Displays model training status to user.
+A window is popped up with message: Model Training In Process. Window is closed when model training is complete.
+
+\end{fulllineitems}
+
+\index{setDefaultImageLocation() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{setDefaultImageLocation()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.setDefaultImageLocation}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{setDefaultImageLocation}}}{}{}
+Function setDefaultImageLocation: Sets the default image directory to find images for analysis.
+
+\end{fulllineitems}
+
+\index{set\_grid() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{set\_grid()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.set_grid}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{set\_grid}}}{}{}
+Creates a blueprint of the various GUI elements in a window of size 820x500.
+Tkinter Frame is creates and place geometry manager is used to position the elements exactly where desired.
+Positions labels ans preview panes in the desired locations, as per the GUI guidelines of this project.
+
+\end{fulllineitems}
+
+\index{set\_menus() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{set\_menus()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.set_menus}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{set\_menus}}}{}{}
+Function set\_menus: Sets the Menu tool bar for the application.
+User can select default image directory and perform batch process usind File and Tools menu options.
+
+\end{fulllineitems}
+
+\index{update\_original\_preview() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{update\_original\_preview()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.update_original_preview}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{update\_original\_preview}}}{\emph{photo}}{}
+Update the original window pane with the passed image.
+\begin{quote}\begin{description}
+\item[{Parameters}] \leavevmode
+\sphinxstyleliteralstrong{\sphinxupquote{photo}} (\sphinxstyleliteralemphasis{\sphinxupquote{string}}) \textendash{} name of the image file to load.
+
+\end{description}\end{quote}
+
+\end{fulllineitems}
+
+\index{view\_results() (pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method)@\spxentry{view\_results()}\spxextra{pyleaf.leaf\_area\_calculator\_gui.LeafAreaCalculatorGUI method}}
+
+\begin{fulllineitems}
+\phantomsection\label{\detokenize{pyleaf.leaf_area_calculator_gui:pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.view_results}}\pysiglinewithargsret{\sphinxbfcode{\sphinxupquote{view\_results}}}{}{}
+Function to display the recently saved results in a new window.
+Displays results available in storedMeasuredValues.csv data file.
+
+\end{fulllineitems}
+
+
+\end{fulllineitems}
+
+
+
+\subsection{Module contents}
+\label{\detokenize{pyleaf:module-pyleaf}}\label{\detokenize{pyleaf:module-contents}}\index{pyleaf (module)@\spxentry{pyleaf}\spxextra{module}}
 
 \chapter{Installation}
 \label{\detokenize{install:installation}}\label{\detokenize{install::doc}}
@@ -380,8 +645,10 @@ On the GUI Application, you will find various options to get you started right a
 \renewcommand{\indexname}{Python Module Index}
 \begin{sphinxtheindex}
 \let\bigletter\sphinxstyleindexlettergroup
-\bigletter{b}
-\item\relax\sphinxstyleindexentry{basefunctions}\sphinxstyleindexpageref{basefunctions:\detokenize{module-basefunctions}}
+\bigletter{p}
+\item\relax\sphinxstyleindexentry{pyleaf}\sphinxstyleindexpageref{pyleaf:\detokenize{module-pyleaf}}
+\item\relax\sphinxstyleindexentry{pyleaf.basefunctions}\sphinxstyleindexpageref{pyleaf.basefunctions:\detokenize{module-pyleaf.basefunctions}}
+\item\relax\sphinxstyleindexentry{pyleaf.leaf\_area\_calculator\_gui}\sphinxstyleindexpageref{pyleaf.leaf_area_calculator_gui:\detokenize{module-pyleaf.leaf_area_calculator_gui}}
 \end{sphinxtheindex}
 
 \renewcommand{\indexname}{Index}

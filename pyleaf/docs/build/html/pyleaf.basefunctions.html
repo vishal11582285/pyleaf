@@ -1,0 +1,318 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyleaf.basefunctions module &#8212; pyleaf 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="pyleaf.leaf_area_calculator_gui module" href="pyleaf.leaf_area_calculator_gui.html" />
+    <link rel="prev" title="pyleaf package" href="pyleaf.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-pyleaf.basefunctions">
+<span id="pyleaf-basefunctions-module"></span><h1>pyleaf.basefunctions module<a class="headerlink" href="#module-pyleaf.basefunctions" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="pyleaf.basefunctions.CNNModel">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">CNNModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#CNNModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.CNNModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolutional Neural network model.
+Input is 256 vector input dimensional array as Embedding layer.
+Additional layers: Conv1d, MaxPooling, Dense, Flatten,Dense.</p>
+<p>Type of class label is categorical crossentropy. Adam Optimizer is selected. Display metric is accuracy.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">CNN model which is a prototype of the classification model specified in this method.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">keras.model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.PROCESS_IMAGE">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">PROCESS_IMAGE</code><span class="sig-paren">(</span><em>sample_name_list</em>, <em>path_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#PROCESS_IMAGE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.PROCESS_IMAGE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept the image file name from LeafAreaCalculator and prcoess the passed image by cobverting it to model input vector and processing all pixels in the image.
+CNN model ouptput class color labels for every pixel. Simple math is then used to calculate leaf area(green pixels) from green:red ratio of all classified labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample_name_list</strong> (<em>string</em>) – image file name to process</li>
+<li><strong>path</strong> (<em>string</em>) – default path to search for image</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of useful parameters: image_file_name, area in cm^2 and ** optional use parameters.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.RETRAIN_MODEL_FROM_SCRATCH">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">RETRAIN_MODEL_FROM_SCRATCH</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#RETRAIN_MODEL_FROM_SCRATCH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.RETRAIN_MODEL_FROM_SCRATCH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrain the CNN model process entirely from scratch. This is action taken when use uses Tools-&gt;Retrain model from GUI menu.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.alter_calc">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">alter_calc</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#alter_calc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.alter_calc" title="Permalink to this definition">¶</a></dt>
+<dd><p>EXtract pixel level information from the passed image. Retrieved (r,g,b) pixel values for every pixel of the image and convert them to hsv values,
+for easier seperation of green colored pixels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>image</strong> (<em>string</em>) – name of image file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">List of pixels scanned across the image left top right, top to bottom.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">List of tuples</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.generateClassLabels">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">generateClassLabels</code><span class="sig-paren">(</span><em>sample</em>, <em>color</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#generateClassLabels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.generateClassLabels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates class labels for all the pixels extracted from an image.
+Example: if red.png was fetched, all pixels of this image are labelled ‘red’. Likewise, for all images in the default training folder (test_images/)
+In our default environment, we have green for all kinds of leaf images, red for all red squared, and any other is irrelevant to pur computations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.getPixelFromLabel">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">getPixelFromLabel</code><span class="sig-paren">(</span><em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#getPixelFromLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.getPixelFromLabel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get the pizel from the class label. This reverse mapping is use to generate an image file fom available class labels.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – class label</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(r,g,b) equivalent of class label color.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.7)">tuple</a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.image_area_calculator">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">image_area_calculator</code><span class="sig-paren">(</span><em>basepath</em>, <em>sample</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#image_area_calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.image_area_calculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process the desired image, and extract the pixel level information of every pixel in the image in (h,s,v) format.
+Utlizes alter_calc method to generate (h,s,v) values.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>basepath</strong> (<em>string</em>) – default path of images</li>
+<li><strong>sample</strong> (<em>string</em>) – name of image file</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">returns the vector embedding which will be input to CNN model.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of lists</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.kerasTokenizerUnit">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">kerasTokenizerUnit</code><span class="sig-paren">(</span><em>topbestwords</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#kerasTokenizerUnit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.kerasTokenizerUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the (h,s,v) value of every pixel to a 256 dimensional feature vector that serves as an input to the CNN EMbedding layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>topbestwords</strong> – maximum dimesion of vector, default: 256</td>
+</tr>
+</tbody>
+</table>
+<p>:type integer
+:return: 256 dimensional vector
+:rtype: np.array</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.load_model">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">load_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#load_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the already available model previously saved on disk.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.processInputTrain">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">processInputTrain</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#processInputTrain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.processInputTrain" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that extracts all training images from default traininf images foled (test_images/) and converts them into required input vector format for CNN embedding layer.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.readFromDisk">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">readFromDisk</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#readFromDisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.readFromDisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads the previously sored pixel/class label values saved as pickled objects.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.regular">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">regular</code><span class="sig-paren">(</span><em>string_list</em>, <em>class_labels_norm</em>, <em>finalSequence_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#regular"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.regular" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trains CNN model with the passed embedding vectors of the image.
+CNN model is trained with 600*600 image dimesions, so 360000 data pointes per training image, for all images in default training images directory, for 10 iterations.
+Note: At the time of documenting, the acuarcy of model achieved was 99.5%.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>string_list</strong> – Dummy variable. Not used.</li>
+<li><strong>class_labels_norm</strong> (<em>Vector</em>) – Normalized class labels for the colors.</li>
+<li><strong>finalSequence</strong> (<em>List of vectors.</em>) – Input embedding vectors for image</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.saveModelToDisk">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">saveModelToDisk</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#saveModelToDisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.saveModelToDisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the currenly used CNN model configuration to disk.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>keras.CNN model</em>) – current CNN model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyleaf.basefunctions.saveToDisk">
+<code class="descclassname">pyleaf.basefunctions.</code><code class="descname">saveToDisk</code><span class="sig-paren">(</span><em>string_list</em>, <em>class_labels_norm</em>, <em>finalSequence_</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyleaf/basefunctions.html#saveToDisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyleaf.basefunctions.saveToDisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves CNN model configuration and input/output pixel/class_label values to disk for later use. Utilizes pickle objects for compressed serialized storage.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyleaf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">pyleaf</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyleaf.html">pyleaf package</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pyleaf.basefunctions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyleaf.leaf_area_calculator_gui.html">pyleaf.leaf_area_calculator_gui module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html#gui-features">GUI Features</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">pyleaf</a><ul>
+  <li><a href="pyleaf.html">pyleaf package</a><ul>
+      <li>Previous: <a href="pyleaf.html" title="previous chapter">pyleaf package</a></li>
+      <li>Next: <a href="pyleaf.leaf_area_calculator_gui.html" title="next chapter">pyleaf.leaf_area_calculator_gui module</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Vishal Sonawane.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/pyleaf.basefunctions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -63,7 +63,7 @@ def alter_calc(image):
     :return: List of pixels scanned across the image left top right, top to bottom.
     :rtype: List of tuples
     """
-    im = Image.open(image)
+    im = Image.open(os.path.join(os.path.dirname(__file__), image))
     img = im.resize((MAX_HEIGHT, MAX_WIDTH), Image.ANTIALIAS)
     pixels = list(img.getdata())
     pixels_rgb = list(map(np.array, pixels))
@@ -187,7 +187,7 @@ def saveModelToDisk(model):
     """
     # serialize model to JSON
     model_json = model.to_json()
-    with open("model.json", "w") as json_file:
+    with open(os.path.join(os.path.dirname(__file__), "model.json"), "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
     model.save_weights("model.h5")

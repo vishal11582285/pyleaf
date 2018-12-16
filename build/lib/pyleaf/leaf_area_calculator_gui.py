@@ -310,7 +310,7 @@ class LeafAreaCalculatorGUI:
             area = round(self.area_green_leaf, 2)
             self.show_area.config(text='{} cm\u00b2'.format(area))
         else:
-            area = round(self.area_green_leaf * 10000, 2)
+            area = round(self.area_green_leaf * 100, 2)
             self.show_area.config(text='{} mm\u00b2'.format(area))
 
     def new_winF(self):  # new window definition
