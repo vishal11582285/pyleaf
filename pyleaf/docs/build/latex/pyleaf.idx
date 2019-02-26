@@ -1,0 +1,15 @@
+\indexentry{basefunctions (module)@\spxentry{basefunctions}\spxextra{module}|hyperpage}{3}
+\indexentry{CNNModel() (in module basefunctions)@\spxentry{CNNModel()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{PROCESS\_IMAGE() (in module basefunctions)@\spxentry{PROCESS\_IMAGE()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{RETRAIN\_MODEL\_FROM\_SCRATCH() (in module basefunctions)@\spxentry{RETRAIN\_MODEL\_FROM\_SCRATCH()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{alter\_calc() (in module basefunctions)@\spxentry{alter\_calc()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{generateClassLabels() (in module basefunctions)@\spxentry{generateClassLabels()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{getPixelFromLabel() (in module basefunctions)@\spxentry{getPixelFromLabel()}\spxextra{in module basefunctions}|hyperpage}{3}
+\indexentry{image\_area\_calculator() (in module basefunctions)@\spxentry{image\_area\_calculator()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{kerasTokenizerUnit() (in module basefunctions)@\spxentry{kerasTokenizerUnit()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{load\_model() (in module basefunctions)@\spxentry{load\_model()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{processInputTrain() (in module basefunctions)@\spxentry{processInputTrain()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{readFromDisk() (in module basefunctions)@\spxentry{readFromDisk()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{regular() (in module basefunctions)@\spxentry{regular()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{saveModelToDisk() (in module basefunctions)@\spxentry{saveModelToDisk()}\spxextra{in module basefunctions}|hyperpage}{4}
+\indexentry{saveToDisk() (in module basefunctions)@\spxentry{saveToDisk()}\spxextra{in module basefunctions}|hyperpage}{4}

@@ -1,0 +1,5 @@
+# Created by pytest automatically.
+.git
+.idea
+.pytest_cache
+*.tar.gz
