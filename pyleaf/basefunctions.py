@@ -13,11 +13,10 @@ from keras.models import model_from_json
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from keras.utils import np_utils
+from keras.utils.vis_utils import plot_model
 
-MAX_HEIGHT = 300
-MAX_WIDTH = 300
-base_path_train = "Images/"
-base_path_test = "Images/"
+MAX_HEIGHT = 600
+MAX_WIDTH = 600
 pickle_file_name_train = 'storedDFforImagesTrains.pickle'
 pickle_file_name_test = 'storedDFforImagesTest.pickle'
 
@@ -43,12 +42,14 @@ def CNNModel():
     model.add(Embedding(input_dim=256, output_dim=16, input_length=4))
     model.add(Conv1D(16, kernel_size=2, activation='relu', strides=1))
     model.add(MaxPooling1D(3))
-    model.add(Dense(256))
+    model.add(Dense(512))
     model.add(Flatten())
-    model.add(Dense(3, activation='softmax'))
+    model.add(Dense(256, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['acc'])
+
+    plot_model(model, to_file='model_plot.png', show_shapes=True,show_layer_names=True)
 
     return model
 
