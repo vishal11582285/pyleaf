@@ -1,0 +1,161 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installation &#8212; pyleaf 1.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pyleaf.leaf_area_calculator_gui module" href="pyleaf.leaf_area_calculator_gui.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Download the source package from GitHub repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">vishal11582285</span><span class="o">/</span><span class="n">pyleaf</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Once downloaded, you should be able to locate the below files and directories:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">all_photos</span> <span class="p">:</span> <span class="n">All</span> <span class="n">raw</span> <span class="n">images</span> <span class="n">that</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="k">for</span> <span class="n">processing</span>
+<span class="n">limited_images</span><span class="p">:</span> <span class="n">Set</span> <span class="n">of</span> <span class="n">limited</span> <span class="n">chosen</span> <span class="n">images</span> <span class="k">for</span> <span class="n">testing</span> <span class="n">purpose</span>
+<span class="n">saved_images</span><span class="p">:</span> <span class="n">This</span> <span class="n">will</span> <span class="n">be</span> <span class="n">the</span> <span class="n">default</span> <span class="n">save</span> <span class="n">directory</span><span class="o">.</span> <span class="o">&lt;</span><span class="n">Do</span> <span class="ow">not</span> <span class="n">change</span> <span class="n">name</span> <span class="n">of</span> <span class="n">this</span> <span class="n">folder</span><span class="o">&gt;</span>
+<span class="n">test_images</span><span class="p">:</span> <span class="n">Contains</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">test</span> <span class="n">images</span> <span class="k">for</span> <span class="n">training</span> <span class="n">the</span> <span class="n">CNN</span> <span class="n">model</span> <span class="k">for</span> <span class="n">classification</span> <span class="n">task</span><span class="o">.</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">h5</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">json</span><span class="p">:</span> <span class="n">Already</span> <span class="n">trained</span> <span class="n">model</span><span class="o">.</span> <span class="n">Ready</span> <span class="k">for</span> <span class="n">immediate</span> <span class="n">use</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>Locate the setup.py file
+In <span class="nb">command</span> prompt, type:
+python setup.py build
+python setup.py install
+</pre></div>
+</div>
+<p>You should now be able to see the package pyleaf in site_packages of your Python interpreter.</p>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Open up the Python interpreter:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span><span class="kn">import</span> <span class="nn">pyleaf</span>
+<span class="n">should</span> <span class="nb">open</span> <span class="n">up</span> <span class="n">the</span> <span class="n">pyleaf</span> <span class="n">GUI</span> <span class="k">for</span> <span class="n">use</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="gui-features">
+<h1>GUI Features<a class="headerlink" href="#gui-features" title="Permalink to this headline">¶</a></h1>
+<p>On the GUI Application, you will find various options to get you started right away:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Batch</span> <span class="n">Process</span><span class="p">:</span>
+<span class="n">Select</span> <span class="n">default</span> <span class="n">image</span> <span class="n">folder</span> <span class="kn">from</span> <span class="nn">File</span><span class="o">-&gt;</span><span class="n">Select</span> <span class="n">Default</span> <span class="n">Image</span> <span class="n">Path</span>
+<span class="n">Then</span> <span class="n">select</span> <span class="n">Tools</span><span class="o">-&gt;</span><span class="n">Batch</span> <span class="n">Process</span> <span class="n">to</span> <span class="n">run</span> <span class="n">leaf</span> <span class="n">area</span> <span class="n">analysis</span> <span class="n">on</span> <span class="nb">all</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">chosen</span> <span class="n">folder</span><span class="o">.</span>
+
+<span class="n">Single</span> <span class="n">Image</span> <span class="n">Analysis</span><span class="p">:</span>
+<span class="n">Use</span> <span class="n">Select</span> <span class="n">Images</span> <span class="n">button</span> <span class="n">to</span> <span class="n">select</span> <span class="n">one</span> <span class="ow">or</span> <span class="n">more</span> <span class="n">image</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">and</span> <span class="n">click</span> <span class="n">Process</span> <span class="n">Images</span> <span class="n">to</span> <span class="n">view</span> <span class="n">the</span> <span class="n">results</span><span class="o">.</span>
+
+<span class="n">Use</span> <span class="n">the</span> <span class="n">navigation</span> <span class="n">page</span> <span class="n">under</span> <span class="n">original</span> <span class="n">window</span> <span class="n">preview</span> <span class="n">to</span> <span class="n">load</span> <span class="nb">all</span> <span class="n">selected</span> <span class="n">images</span><span class="o">.</span>
+
+<span class="n">Reset</span> <span class="n">Workspace</span> <span class="n">button</span> <span class="n">clears</span> <span class="n">the</span> <span class="n">workspace</span> <span class="k">for</span> <span class="n">a</span> <span class="n">fresh</span> <span class="n">start</span><span class="o">.</span>
+
+<span class="n">Tools</span><span class="o">-&gt;</span><span class="n">Retrain</span> <span class="n">Model</span> <span class="n">to</span> <span class="n">re</span><span class="o">-</span><span class="n">train</span> <span class="n">CNN</span> <span class="n">clasification</span> <span class="n">model</span> <span class="n">based</span> <span class="n">on</span> <span class="n">updated</span> <span class="n">training</span> <span class="n">images</span> <span class="ow">in</span> <span class="n">test_images</span><span class="o">/</span> <span class="n">folder</span><span class="o">.</span>
+
+<span class="n">Tools</span><span class="o">-&gt;</span><span class="n">View</span> <span class="n">Recent</span> <span class="n">Results</span> <span class="n">to</span> <span class="nb">open</span> <span class="n">up</span> <span class="n">a</span> <span class="n">window</span> <span class="ow">and</span> <span class="n">view</span> <span class="n">the</span> <span class="n">image</span> <span class="ow">and</span> <span class="n">their</span> <span class="n">calculated</span> <span class="n">areas</span> <span class="ow">in</span> <span class="n">tabular</span> <span class="nb">format</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyleaf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="modules.html">pyleaf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyleaf.basefunctions.html">pyleaf.basefunctions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyleaf.leaf_area_calculator_gui.html">pyleaf.leaf_area_calculator_gui module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#gui-features">GUI Features</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="pyleaf.leaf_area_calculator_gui.html" title="previous chapter">pyleaf.leaf_area_calculator_gui module</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Vishal Sonawane.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/install.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

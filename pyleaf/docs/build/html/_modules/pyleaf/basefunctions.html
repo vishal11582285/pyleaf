@@ -1,0 +1,416 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyleaf.basefunctions &#8212; pyleaf 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pyleaf.basefunctions</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">colorsys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Dense</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">MaxPooling1D</span><span class="p">,</span> <span class="n">Conv1D</span>
+<span class="kn">from</span> <span class="nn">keras.layers</span> <span class="k">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">Sequential</span>
+<span class="kn">from</span> <span class="nn">keras.models</span> <span class="k">import</span> <span class="n">model_from_json</span>
+<span class="kn">from</span> <span class="nn">keras.preprocessing.sequence</span> <span class="k">import</span> <span class="n">pad_sequences</span>
+<span class="kn">from</span> <span class="nn">keras.preprocessing.text</span> <span class="k">import</span> <span class="n">Tokenizer</span>
+<span class="kn">from</span> <span class="nn">keras.utils</span> <span class="k">import</span> <span class="n">np_utils</span>
+
+<span class="n">MAX_HEIGHT</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">MAX_WIDTH</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="n">base_path_train</span> <span class="o">=</span> <span class="s2">&quot;Images/&quot;</span>
+<span class="n">base_path_test</span> <span class="o">=</span> <span class="s2">&quot;Images/&quot;</span>
+<span class="n">pickle_file_name_train</span> <span class="o">=</span> <span class="s1">&#39;storedDFforImagesTrains.pickle&#39;</span>
+<span class="n">pickle_file_name_test</span> <span class="o">=</span> <span class="s1">&#39;storedDFforImagesTest.pickle&#39;</span>
+
+<span class="n">base_path_output</span> <span class="o">=</span> <span class="s2">&quot;data/&quot;</span>
+
+<span class="n">max_file_limit</span> <span class="o">=</span> <span class="mi">12500</span>
+<span class="n">global_nature</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="n">wordVocab</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="CNNModel"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.CNNModel">[docs]</a><span class="k">def</span> <span class="nf">CNNModel</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convolutional Neural network model.</span>
+<span class="sd">    Input is 256 vector input dimensional array as Embedding layer.</span>
+<span class="sd">    Additional layers: Conv1d, MaxPooling, Dense, Flatten,Dense.</span>
+
+<span class="sd">    Type of class label is categorical crossentropy. Adam Optimizer is selected. Display metric is accuracy.</span>
+
+<span class="sd">    :return: CNN model which is a prototype of the classification model specified in this method.</span>
+<span class="sd">    :rtype: keras.model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="n">input_dim</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">output_dim</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">input_length</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Conv1D</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">,</span> <span class="n">strides</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">MaxPooling1D</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">256</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Flatten</span><span class="p">())</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Dense</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;categorical_crossentropy&#39;</span><span class="p">,</span>
+                  <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span>
+                  <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="alter_calc"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.alter_calc">[docs]</a><span class="k">def</span> <span class="nf">alter_calc</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    EXtract pixel level information from the passed image. Retrieved (r,g,b) pixel values for every pixel of the image and convert them to hsv values,</span>
+<span class="sd">    for easier seperation of green colored pixels.</span>
+
+<span class="sd">    :param image: name of image file</span>
+<span class="sd">    :type image: string</span>
+<span class="sd">    :return: List of pixels scanned across the image left top right, top to bottom.</span>
+<span class="sd">    :rtype: List of tuples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">im</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">MAX_HEIGHT</span><span class="p">,</span> <span class="n">MAX_WIDTH</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+    <span class="n">pixels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">getdata</span><span class="p">())</span>
+    <span class="n">pixels_rgb</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">pixels</span><span class="p">))</span>
+    <span class="n">pixels_hsv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">255</span><span class="p">,</span> <span class="n">pixels_rgb</span><span class="p">))</span>
+    <span class="n">pixels_hsv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">colorsys</span><span class="o">.</span><span class="n">rgb_to_hsv</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">pixels_hsv</span><span class="p">))</span>
+    <span class="n">pixels_hsv</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">360</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)),</span> <span class="n">pixels_hsv</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pixels_hsv</span></div>
+
+
+<div class="viewcode-block" id="kerasTokenizerUnit"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.kerasTokenizerUnit">[docs]</a><span class="k">def</span> <span class="nf">kerasTokenizerUnit</span><span class="p">(</span><span class="n">topbestwords</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert the (h,s,v) value of every pixel to a 256 dimensional feature vector that serves as an input to the CNN EMbedding layer.</span>
+
+<span class="sd">    :param topbestwords: maximum dimesion of vector, default: 256</span>
+<span class="sd">    :type integer</span>
+<span class="sd">    :return: 256 dimensional vector</span>
+<span class="sd">    :rtype: np.array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">num_words</span><span class="o">=</span><span class="n">topbestwords</span><span class="p">)</span>
+    <span class="n">list_range</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">topbestwords</span><span class="p">))))</span>
+    <span class="n">tokenizer</span><span class="o">.</span><span class="n">fit_on_texts</span><span class="p">([</span><span class="n">list_range</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">tokenizer</span></div>
+
+
+<div class="viewcode-block" id="image_area_calculator"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.image_area_calculator">[docs]</a><span class="k">def</span> <span class="nf">image_area_calculator</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="n">sample</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the desired image, and extract the pixel level information of every pixel in the image in (h,s,v) format.</span>
+<span class="sd">    Utlizes alter_calc method to generate (h,s,v) values.</span>
+
+<span class="sd">    :param basepath: default path of images</span>
+<span class="sd">    :type basepath: string</span>
+<span class="sd">    :param sample: name of image file</span>
+<span class="sd">    :type sample: string</span>
+<span class="sd">    :return: returns the vector embedding which will be input to CNN model.</span>
+<span class="sd">    :rtype: list of lists</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenizer_</span> <span class="o">=</span> <span class="n">kerasTokenizerUnit</span><span class="p">(</span><span class="mi">256</span><span class="p">)</span>
+    <span class="n">pixels_list</span> <span class="o">=</span> <span class="n">alter_calc</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">basepath</span><span class="p">,</span> <span class="n">sample</span><span class="p">))</span>
+    <span class="n">size_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pixels_list</span><span class="p">)</span>
+
+    <span class="n">string_list</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pixels_list</span><span class="p">]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">string_list</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tokenizer_</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">size_</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="processInputTrain"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.processInputTrain">[docs]</a><span class="k">def</span> <span class="nf">processInputTrain</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function that extracts all training images from default traininf images foled (test_images/) and converts them into required input vector format for CNN embedding layer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read from Pickle Object</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading from Pickle Object Saved.&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">basepath</span> <span class="o">=</span> <span class="s1">&#39;test_images/&#39;</span>
+    <span class="n">tokenizer_</span> <span class="o">=</span> <span class="n">kerasTokenizerUnit</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">list_train_images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">basepath</span><span class="p">))</span>
+    <span class="n">pixels_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">class_labels_norm</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">check</span> <span class="ow">in</span> <span class="n">list_train_images</span><span class="p">:</span>
+        <span class="n">pix</span> <span class="o">=</span> <span class="n">alter_calc</span><span class="p">(</span><span class="n">basepath</span> <span class="o">+</span> <span class="n">check</span><span class="p">)</span>
+        <span class="n">size_</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pix</span><span class="p">)</span>
+        <span class="n">pixels_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pix</span><span class="p">)</span>
+        <span class="n">class_labels_norm</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">generateClassLabels</span><span class="p">(</span><span class="n">size_</span><span class="p">,</span> <span class="n">check</span><span class="p">))</span>
+    <span class="n">string_list</span> <span class="o">=</span> <span class="p">[[</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">i</span><span class="p">))]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pixels_list</span><span class="p">]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">string_list</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tokenizer_</span><span class="o">.</span><span class="n">texts_to_sequences</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="load_model"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.load_model">[docs]</a><span class="k">def</span> <span class="nf">load_model</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads the already available model previously saved on disk.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">json_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;model.json&#39;</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">loaded_model_json</span> <span class="o">=</span> <span class="n">json_file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">json_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">loaded_model</span> <span class="o">=</span> <span class="n">model_from_json</span><span class="p">(</span><span class="n">loaded_model_json</span><span class="p">)</span>
+    <span class="n">loaded_model</span><span class="o">.</span><span class="n">load_weights</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;model.h5&quot;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loaded model from disk&quot;</span><span class="p">)</span>
+    <span class="n">loaded_model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s1">&#39;categorical_crossentropy&#39;</span><span class="p">,</span>
+                         <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span>
+                         <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;acc&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">loaded_model</span></div>
+
+
+<div class="viewcode-block" id="saveToDisk"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.saveToDisk">[docs]</a><span class="k">def</span> <span class="nf">saveToDisk</span><span class="p">(</span><span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves CNN model configuration and input/output pixel/class_label values to disk for later use. Utilizes pickle objects for compressed serialized storage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pixel_label_df</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">finalSequence_</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span><span class="p">):</span>
+        <span class="n">pixel_label_df</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">])</span>
+    <span class="n">dataframeToDisk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pixel_label_df</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dataframeToDisk</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dataframeToDisk</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+    <span class="n">dataframeToDisk</span><span class="o">.</span><span class="n">to_pickle</span><span class="p">(</span><span class="s1">&#39;savedPicklePixelLabel.pickle&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;Successfully Written Data to Disk (Pickle Object) !&quot;</span></div>
+
+
+<div class="viewcode-block" id="readFromDisk"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.readFromDisk">[docs]</a><span class="k">def</span> <span class="nf">readFromDisk</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads the previously sored pixel/class label values saved as pickled objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dataframeFromDisk</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s1">&#39;savedPicklePixelLabel.pickle&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">dataframeFromDisk</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+    <span class="n">list_</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dataframeFromDisk</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">string_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataframeFromDisk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">]</span>
+    <span class="n">class_labels_norm</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataframeFromDisk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">]</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataframeFromDisk</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">list_</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">string_list</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span></div>
+
+
+<div class="viewcode-block" id="saveModelToDisk"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.saveModelToDisk">[docs]</a><span class="k">def</span> <span class="nf">saveModelToDisk</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves the currenly used CNN model configuration to disk.</span>
+
+<span class="sd">    :param model: current CNN model</span>
+<span class="sd">    :type model: keras.CNN model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># serialize model to JSON</span>
+    <span class="n">model_json</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;model.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_file</span><span class="p">:</span>
+        <span class="n">json_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">model_json</span><span class="p">)</span>
+    <span class="c1"># serialize weights to HDF5</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">save_weights</span><span class="p">(</span><span class="s2">&quot;model.h5&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved model to disk&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generateClassLabels"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.generateClassLabels">[docs]</a><span class="k">def</span> <span class="nf">generateClassLabels</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates class labels for all the pixels extracted from an image.</span>
+<span class="sd">    Example: if red.png was fetched, all pixels of this image are labelled &#39;red&#39;. Likewise, for all images in the default training folder (test_images/)</span>
+<span class="sd">    In our default environment, we have green for all kinds of leaf images, red for all red squared, and any other is irrelevant to pur computations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;green&#39;</span><span class="p">)):</span>
+        <span class="n">temp</span><span class="p">[</span><span class="n">temp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)):</span>
+        <span class="n">temp</span><span class="p">[</span><span class="n">temp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;envelope&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">str</span><span class="p">(</span><span class="n">color</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)):</span>
+        <span class="n">temp</span><span class="p">[</span><span class="n">temp</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">temp</span></div>
+
+
+<div class="viewcode-block" id="regular"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.regular">[docs]</a><span class="k">def</span> <span class="nf">regular</span><span class="p">(</span><span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trains CNN model with the passed embedding vectors of the image.</span>
+<span class="sd">    CNN model is trained with 600*600 image dimesions, so 360000 data pointes per training image, for all images in default training images directory, for 10 iterations.</span>
+<span class="sd">    Note: At the time of documenting, the acuarcy of model achieved was 99.5%.</span>
+
+<span class="sd">    :param string_list: Dummy variable. Not used.</span>
+<span class="sd">    :param class_labels_norm: Normalized class labels for the colors.</span>
+<span class="sd">    :type class_labels_norm: Vector</span>
+<span class="sd">    :param finalSequence_: Input embedding vectors for image</span>
+<span class="sd">    :type finalSequence_: List of vectors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading from disk....&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">finalSequence_</span> <span class="o">=</span> <span class="n">pad_sequences</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="s1">&#39;pre&#39;</span><span class="p">)</span>
+    <span class="c1"># Fit Model on Training Data. Comment out if model is saved to disk.</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Defining Model....&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">CNNModel</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training Model....&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">class_labels_norm_</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">to_categorical</span><span class="p">(</span><span class="n">class_labels_norm</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">class_labels_norm_</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+    <span class="n">saveModelToDisk</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">class_labels_norm_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The model performed with &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot; Accuracy.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The model performed with &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">score</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot; Loss.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="getPixelFromLabel"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.getPixelFromLabel">[docs]</a><span class="k">def</span> <span class="nf">getPixelFromLabel</span><span class="p">(</span><span class="n">label</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to get the pizel from the class label. This reverse mapping is use to generate an image file fom available class labels.</span>
+
+<span class="sd">    :param label: class label</span>
+<span class="sd">    :type label: int</span>
+<span class="sd">    :return: (r,g,b) equivalent of class label color.</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">153</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RETRAIN_MODEL_FROM_SCRATCH"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.RETRAIN_MODEL_FROM_SCRATCH">[docs]</a><span class="k">def</span> <span class="nf">RETRAIN_MODEL_FROM_SCRATCH</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrain the CNN model process entirely from scratch. This is action taken when use uses Tools-&gt;Retrain model from GUI menu.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Working on Training Data...&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span> <span class="o">=</span> <span class="n">processInputTrain</span><span class="p">()</span>
+
+    <span class="n">regular</span><span class="p">(</span><span class="n">string_list</span><span class="p">,</span> <span class="n">class_labels_norm</span><span class="p">,</span> <span class="n">finalSequence_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PROCESS_IMAGE"><a class="viewcode-back" href="../../pyleaf.basefunctions.html#pyleaf.basefunctions.PROCESS_IMAGE">[docs]</a><span class="k">def</span> <span class="nf">PROCESS_IMAGE</span><span class="p">(</span><span class="n">sample_name_list</span><span class="p">,</span> <span class="n">path_</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Accept the image file name from LeafAreaCalculator and prcoess the passed image by cobverting it to model input vector and processing all pixels in the image.</span>
+<span class="sd">    CNN model ouptput class color labels for every pixel. Simple math is then used to calculate leaf area(green pixels) from green:red ratio of all classified labels.</span>
+
+<span class="sd">    :param sample_name_list: image file name to process</span>
+<span class="sd">    :type sample_name_list:  string</span>
+<span class="sd">    :param path_: default path to search for image</span>
+<span class="sd">    :type path_: string</span>
+<span class="sd">    :return: list of useful parameters: image_file_name, area in cm^2 and ** optional use parameters.</span>
+<span class="sd">    :rtype: List</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">()</span>
+    <span class="n">list_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">path_save</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;saved_images/&#39;</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path_save</span>
+
+    <span class="n">howManyFiles</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_name_list</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">howManyFiles</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; Images In Proces..&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;PROGRESS:&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">sample_name</span> <span class="ow">in</span> <span class="n">sample_name_list</span><span class="p">:</span>
+        <span class="n">finalSequence_</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">image_area_calculator</span><span class="p">(</span><span class="n">path_</span><span class="p">,</span> <span class="n">sample_name</span><span class="p">)</span>
+        <span class="n">y_prob</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_classes</span><span class="p">(</span><span class="n">finalSequence_</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">abc</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">y_prob</span><span class="p">)</span>
+        <span class="n">red</span> <span class="o">=</span> <span class="n">abc</span><span class="p">[</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">red</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">green</span> <span class="o">=</span> <span class="n">abc</span><span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="p">(</span><span class="n">green</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="n">red</span>
+        <span class="n">list_of_pixels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">getPixelFromLabel</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y_prob</span><span class="p">))</span>
+
+        <span class="n">im2</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">MAX_HEIGHT</span><span class="p">,</span> <span class="n">MAX_WIDTH</span><span class="p">))</span>
+        <span class="n">im2</span><span class="o">.</span><span class="n">putdata</span><span class="p">(</span><span class="n">list_of_pixels</span><span class="p">)</span>
+        <span class="n">im2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="n">sample_name</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">list_</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample_name</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">red</span> <span class="o">*</span> <span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="n">red</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span> <span class="n">green</span> <span class="o">*</span> <span class="n">size</span><span class="p">,</span> <span class="p">[</span><span class="n">MAX_HEIGHT</span><span class="p">,</span> <span class="n">MAX_WIDTH</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">list_</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pyleaf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyleaf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyleaf.basefunctions.html">pyleaf.basefunctions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyleaf.leaf_area_calculator_gui.html">pyleaf.leaf_area_calculator_gui module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html#gui-features">GUI Features</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Vishal Sonawane.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,662 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyleaf.leaf_area_calculator_gui &#8212; pyleaf 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for pyleaf.leaf_area_calculator_gui</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">relpath</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="k">import</span> <span class="n">filedialog</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="k">import</span> <span class="n">ttk</span><span class="p">,</span> <span class="n">messagebox</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="k">import</span> <span class="n">ImageTk</span>
+
+<span class="kn">from</span> <span class="nn">.basefunctions</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI">[docs]</a><span class="k">class</span> <span class="nc">LeafAreaCalculatorGUI</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class LeafAreaCalculatorGUI is a Tkinter GUI manager, that is responsible for interacting with the user</span>
+<span class="sd">    and displaying results.</span>
+<span class="sd">    The backend application is a convulutional neural network that is trained with green, red and other colors,</span>
+<span class="sd">    to generate a robust and reliable classifier that can detect green leaf within a given image in varying light conditions and leaf shades,</span>
+<span class="sd">    and computes the area of the green leaf with respect to a fixed red square of 4 cm^2.</span>
+
+<span class="sd">    GUI includes two preview panes:</span>
+<span class="sd">    left pane is the original window pane, that displays the original image and the name of image.</span>
+<span class="sd">    right pane is the updated window pane, that displays the resultant analyzd image from classifier.</span>
+
+<span class="sd">    Under the left pane is a navigation bar, with which user can switch left or right through multiple images. This option is diabled if user is working on only one image.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">IMAGE_HEIGHT</span> <span class="o">=</span> <span class="mi">300</span>
+    <span class="n">IMAGE_WIDTH</span> <span class="o">=</span> <span class="mi">300</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        LeafAreaCalculatorGUI constructor accepts the root as Tkinter main window.</span>
+
+<span class="sd">        :param root: Tkinter Main Window</span>
+<span class="sd">        Sets parameters and configurations to default.</span>
+<span class="sd">        :type root: Tk()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span> <span class="o">=</span> <span class="n">IntVar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_area_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">font</span> <span class="o">=</span> <span class="s1">&#39;Helvetica&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">font_param</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">font</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">font_size</span><span class="p">,</span> <span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_results</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_save_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;saved_images/&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">was_default_set</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_grid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_menus</span><span class="p">()</span>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.set_menus"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.set_menus">[docs]</a>    <span class="k">def</span> <span class="nf">set_menus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function set_menus: Sets the Menu tool bar for the application.</span>
+<span class="sd">        User can select default image directory and perform batch process usind File and Tools menu options.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">menu</span><span class="o">=</span><span class="n">menu</span><span class="p">)</span>
+        <span class="n">filemenu</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;File&quot;</span><span class="p">,</span> <span class="n">menu</span><span class="o">=</span><span class="n">filemenu</span><span class="p">)</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Set Default Image Folder&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setDefaultImageLocation</span><span class="p">)</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">add_separator</span><span class="p">()</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Exit&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">destroy</span><span class="p">)</span>
+
+        <span class="n">toolsmenu</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Tools&#39;</span><span class="p">,</span> <span class="n">menu</span><span class="o">=</span><span class="n">toolsmenu</span><span class="p">)</span>
+        <span class="n">toolsmenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Batch Process Images&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">process_all</span><span class="p">)</span>
+        <span class="n">toolsmenu</span><span class="o">.</span><span class="n">add_separator</span><span class="p">()</span>
+        <span class="n">toolsmenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;ReTrain Model&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">retrain_model</span><span class="p">)</span>
+
+        <span class="n">toolsmenu</span><span class="o">.</span><span class="n">add_separator</span><span class="p">()</span>
+        <span class="n">toolsmenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;View Recent Result&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">view_results</span><span class="p">)</span>
+
+        <span class="n">helpmenu</span> <span class="o">=</span> <span class="n">Menu</span><span class="p">(</span><span class="n">menu</span><span class="p">)</span>
+        <span class="n">menu</span><span class="o">.</span><span class="n">add_cascade</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Help&quot;</span><span class="p">,</span> <span class="n">menu</span><span class="o">=</span><span class="n">helpmenu</span><span class="p">)</span>
+        <span class="n">helpmenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;About...&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">About</span><span class="p">)</span>
+        <span class="n">helpmenu</span><span class="o">.</span><span class="n">add_command</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s2">&quot;Documentation&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">documentation</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.retrain_model_run"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.retrain_model_run">[docs]</a>    <span class="k">def</span> <span class="nf">retrain_model_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function retrain_model_run: Displays model training status to user.</span>
+<span class="sd">        A window is popped up with message: Model Training In Process. Window is closed when model training is complete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">RETRAIN_MODEL_FROM_SCRATCH</span><span class="p">()):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">retrain_window</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrain_window</span><span class="o">.</span><span class="n">destroy</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.retrain_model"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.retrain_model">[docs]</a>    <span class="k">def</span> <span class="nf">retrain_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function retrain_model: Performs re-training of the classifier on user input from Tools-&gt;Retrain model.</span>
+<span class="sd">        Note: User should retrain the model only if training images have changed, or classification model seems corrupt.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrain_window</span> <span class="o">=</span> <span class="n">Toplevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">)</span>
+
+        <span class="n">label_</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">retrain_window</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Model Training In Progress..&#39;</span><span class="p">)</span>
+        <span class="n">label_</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retrain_window</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">retrain_model_run</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.setDefaultImageLocation"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.setDefaultImageLocation">[docs]</a>    <span class="k">def</span> <span class="nf">setDefaultImageLocation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function setDefaultImageLocation: Sets the default image directory to find images for analysis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">was_default_set</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askdirectory</span><span class="p">(</span><span class="n">initialdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.About"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.About">[docs]</a>    <span class="k">def</span> <span class="nf">About</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the File-&gt;About pop up box.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">messagebox</span><span class="o">.</span><span class="n">showinfo</span><span class="p">(</span><span class="s2">&quot;pyleaf&quot;</span><span class="p">,</span> <span class="s2">&quot;pyleaf:</span><span class="se">\n</span><span class="s2"> Simplified Leaf Area Analysis Using Machine Learning&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.display_this_image"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_this_image">[docs]</a>    <span class="k">def</span> <span class="nf">display_this_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">passed_image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that collects a passed image from disk and displays in the original preview window and updated result window.</span>
+
+<span class="sd">        :param passed_image: The image name to be fetched from default_image_path and default_save_path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">originalonly</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_image_name</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">passed_image</span>
+
+        <span class="c1"># Original Preview Pane</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">,</span> <span class="n">passed_image</span><span class="p">))</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span> <span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+        <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">photo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">originalonly</span><span class="p">):</span>
+            <span class="c1"># Processed Preview Pane</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_save_path</span> <span class="o">+</span> <span class="n">passed_image</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span> <span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">),</span>
+                                 <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+            <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">photo</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.display_left"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_left">[docs]</a>    <span class="k">def</span> <span class="nf">display_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Left Arrow button of the navigation control under original preview pane.</span>
+<span class="sd">        Disabled if navigation reaches 1/N , Enabled otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Left&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Current page: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_this_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_area_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()]])</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.display_right"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_right">[docs]</a>    <span class="k">def</span> <span class="nf">display_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Right Arrow button of the navigation control under original preview pane.</span>
+<span class="sd">        Disabled if navigation reaches N/N , Enabled otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Right&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Current page: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_this_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">display_result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stored_area_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()]])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ACTIVE</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.change_result_preview"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_result_preview">[docs]</a>    <span class="k">def</span> <span class="nf">change_result_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">every</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the result window pane with the passed image.</span>
+
+<span class="sd">        :param every: name of the image file to load.</span>
+<span class="sd">        :type every: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evrry: &#39;</span><span class="p">,</span> <span class="n">every</span><span class="p">)</span>
+        <span class="n">analysis_info</span> <span class="o">=</span> <span class="n">PROCESS_IMAGE</span><span class="p">([</span><span class="n">every</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span> <span class="o">=</span> <span class="n">analysis_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">area_red_square</span> <span class="o">=</span> <span class="mf">4.0</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EVery: &#39;</span><span class="p">,</span> <span class="n">every</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_area_dict</span><span class="p">[</span><span class="n">every</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">analysis_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">analysis_info</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">analysis_info</span><span class="p">)</span>
+
+        <span class="c1"># Now that image analysis is complete, load the transformed image to Label2</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_save_path</span> <span class="o">+</span> <span class="n">every</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span> <span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+        <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">photo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.update_original_preview"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.update_original_preview">[docs]</a>    <span class="k">def</span> <span class="nf">update_original_preview</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">photo</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the original window pane with the passed image.</span>
+
+<span class="sd">        :param photo: name of the image file to load.</span>
+<span class="sd">        :type photo: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">photo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_image_name</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;1/1&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NORMAL</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NORMAL</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.display_result"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.display_result">[docs]</a>    <span class="k">def</span> <span class="nf">display_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Displays the area in cm^2 with an option to switch to mm^2 by clicking on the numerical result displayed.</span>
+
+<span class="sd">        :param area: The area to display in the &#39;Leaf Area:&#39;  field.</span>
+<span class="sd">        :type area: float, 2 bit decimal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">area</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span> <span class="o">=</span> <span class="n">area</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cm</span><span class="se">\u00b2</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Seting a: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="o">.</span><span class="n">destroy</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+
+                <span class="c1"># Save results</span>
+                <span class="n">dataFrameMeasure</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_results</span><span class="p">,</span>
+                                                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Sample&#39;</span><span class="p">,</span> <span class="s1">&#39;Area&#39;</span><span class="p">,</span> <span class="s1">&#39;Red Pixels&#39;</span><span class="p">,</span> <span class="s1">&#39;Red Ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;Green Pixels&#39;</span><span class="p">,</span>
+                                                         <span class="s1">&#39;Dimensions&#39;</span><span class="p">])</span>
+                <span class="n">dataFrameMeasure</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;storedMeasuredValues.csv&#39;</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.documentation"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.documentation">[docs]</a>    <span class="k">def</span> <span class="nf">documentation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">webbrowser</span>
+        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">realpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;pyleaf.pdf&#39;</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.view_results"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.view_results">[docs]</a>    <span class="k">def</span> <span class="nf">view_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Function to display the recently saved results in a new window.</span>
+<span class="sd">        Displays results available in storedMeasuredValues.csv data file.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_window</span> <span class="o">=</span> <span class="n">Toplevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">storedAreas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;storedMeasuredValues.csv&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_window</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="n">storedAreas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Leaf Area Results&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span> <span class="n">relief</span><span class="o">=</span><span class="s1">&#39;sunken&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                                                                                     <span class="n">columnspan</span><span class="o">=</span>
+                                                                                                     <span class="n">storedAreas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span>
+                                                                                                         <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">every_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;Sample&#39;</span><span class="p">,</span> <span class="s1">&#39;Area&#39;</span><span class="p">]):</span>
+            <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">every_col</span><span class="p">),</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s1">&#39;flat&#39;</span><span class="p">,</span> <span class="n">fg</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                                                                                                                <span class="n">column</span><span class="o">=</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">row</span><span class="p">,</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">every_row</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">storedAreas</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">every_col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;Sample&#39;</span><span class="p">,</span> <span class="s1">&#39;Area&#39;</span><span class="p">]):</span>
+                <span class="n">label_</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">every_row</span><span class="p">[</span><span class="n">every_col</span><span class="p">]),</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">,</span> <span class="n">relief</span><span class="o">=</span><span class="s1">&#39;flat&#39;</span><span class="p">)</span>
+                <span class="n">label_</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">row</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="n">col</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">columnspan</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Arial&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">storedAreas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
+                                                                   <span class="n">columnspan</span><span class="o">=</span><span class="n">storedAreas</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.change_unit"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_unit">[docs]</a>    <span class="k">def</span> <span class="nf">change_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that allows the numerical leaf area result to switch between cm^2 and mm^2.</span>
+<span class="sd">        The result is displayed in Leaf Area label field.</span>
+
+<span class="sd">        :param event: Accept the button click event.</span>
+<span class="sd">        :type event: Tkinter Button Press 1.</span>
+<span class="sd">        :return: Return &#39;NA&#39; back if &#39;NA&#39; is clicked.</span>
+<span class="sd">        :rtype: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">is_cm</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="s1">&#39;cm&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;NA&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_cm</span><span class="p">):</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> cm</span><span class="se">\u00b2</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">area_green_leaf</span> <span class="o">*</span> <span class="mi">10000</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> mm</span><span class="se">\u00b2</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">area</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.new_winF"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.new_winF">[docs]</a>    <span class="k">def</span> <span class="nf">new_winF</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># new window definition</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that creates a progress window to display progress of leaf analysis with multiple images.</span>
+<span class="sd">        A new window updates the status with analysis of every leaf in the default_image_folder, and closes automatically when program processes all images.</span>
+
+<span class="sd">        The window is positioned to be in the centre of the main window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">window_height</span> <span class="o">=</span> <span class="mi">150</span>
+        <span class="n">window_width</span> <span class="o">=</span> <span class="mi">300</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">newwin</span> <span class="o">=</span> <span class="n">Toplevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">)</span>
+        <span class="n">x_cordinate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">820</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">window_width</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">y_cordinate</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="mi">500</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">window_height</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">x</span><span class="si">{}</span><span class="s2">+</span><span class="si">{}</span><span class="s2">+</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window_width</span><span class="p">,</span> <span class="n">window_height</span><span class="p">,</span> <span class="n">x_cordinate</span><span class="p">,</span> <span class="n">y_cordinate</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="n">ttk</span><span class="o">.</span><span class="n">Progressbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="n">HORIZONTAL</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;determinate&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">prog_label</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Processing...&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prog_label</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.change_progress"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.change_progress">[docs]</a>    <span class="k">def</span> <span class="nf">change_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the progress value in the progress window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newwin</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Getting a: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">get</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Val: &#39;</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.process_all"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.process_all">[docs]</a>    <span class="k">def</span> <span class="nf">process_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that is triggered when Batch Process feature is activated by user.</span>
+<span class="sd">        Iterate over all images one by one from the list of images in default_image_path, and update the Leaf Area and preview panes as the results become available.</span>
+<span class="sd">        While the operation is in progress, new window is popped that displays dynamic progress of task.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;.jp&#39;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DF: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;List_: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">was_default_set</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Setting current page..&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">every</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">):</span>
+                <span class="c1"># Load original picture</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">,</span> <span class="n">every</span><span class="p">))</span>
+                <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span> <span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">),</span>
+                                     <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+                <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_original_preview</span><span class="p">,</span> <span class="n">photo</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span> <span class="o">=</span> <span class="n">every</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_select</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">button_area</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NORMAL</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOI: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process_image</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messagebox</span><span class="o">.</span><span class="n">showwarning</span><span class="p">(</span><span class="s2">&quot;Default Path&quot;</span><span class="p">,</span> <span class="s2">&quot;Default Image Path was not set. Use File-&gt;Set Default Image Folder&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.process_image"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.process_image">[docs]</a>    <span class="k">def</span> <span class="nf">process_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">every</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Function that accepts only one image name as input, and performs analysis.</span>
+<span class="sd">        Updates the Leaf Area and preview panes as the result become available. If no input is provides, iteratively processes all images in the global list_ maintained by class as list of all</span>
+<span class="sd">        images in the default image path.</span>
+
+<span class="sd">        :param every: Image name to process</span>
+<span class="sd">        :type every: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_clicked</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">IntVar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">every</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_result_preview</span><span class="p">,</span> <span class="n">every</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">new_winF</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">every</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_progress</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_result_preview</span><span class="p">,</span> <span class="n">every</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">5000</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_result</span><span class="p">)</span></div>
+
+    <span class="c1"># Ask the user to select a one or more file names.</span>
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.answer"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.answer">[docs]</a>    <span class="k">def</span> <span class="nf">answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allows user to select base image path from where all images in that folder can be polled for batch analysis.</span>
+<span class="sd">        When user selects the default folder through the dialog box, all images in the selected folder are loaded in the original preview pane.</span>
+
+<span class="sd">        :param x: Tkinter Instance of main window or root</span>
+<span class="sd">        :type x: Tk()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+        <span class="c1"># Build a list of tuples for each file type the file dialog should display</span>
+        <span class="n">my_filetypes</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;all files&#39;</span><span class="p">,</span> <span class="s1">&#39;.*&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;image files&#39;</span><span class="p">,</span> <span class="s1">&#39;.JPG&#39;</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_</span> <span class="o">=</span> <span class="n">filedialog</span><span class="o">.</span><span class="n">askopenfilenames</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">initialdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">,</span>
+                                                 <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Please select one or more files:&quot;</span><span class="p">,</span>
+                                                 <span class="n">filetypes</span><span class="o">=</span><span class="n">my_filetypes</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">list_</span> <span class="o">=</span> <span class="p">[</span><span class="n">relpath</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;NOI: &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Setting current page..&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">number_of_images</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_page</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">every</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list_</span><span class="p">):</span>
+            <span class="c1"># Load original picture</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_image_path</span><span class="p">,</span> <span class="n">every</span><span class="p">))</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span> <span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">),</span>
+                                 <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+            <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">after</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_original_preview</span><span class="p">,</span> <span class="n">photo</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span> <span class="o">=</span> <span class="n">every</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_select</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_area</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NORMAL</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="o">.</span><span class="n">update_idletasks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_this_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_image_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.reset_workspace"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.reset_workspace">[docs]</a>    <span class="k">def</span> <span class="nf">reset_workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the workspace to defaults. This provides a fresh GUI configuration to user.</span>
+<span class="sd">        Clears all images in the default save path directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_grid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_area_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">every</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_save_path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_save_path</span><span class="p">,</span> <span class="n">every</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="LeafAreaCalculatorGUI.set_grid"><a class="viewcode-back" href="../../pyleaf.leaf_area_calculator_gui.html#pyleaf.leaf_area_calculator_gui.LeafAreaCalculatorGUI.set_grid">[docs]</a>    <span class="k">def</span> <span class="nf">set_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a blueprint of the various GUI elements in a window of size 820x500.</span>
+<span class="sd">        Tkinter Frame is creates and place geometry manager is used to position the elements exactly where desired.</span>
+<span class="sd">        Positions labels ans preview panes in the desired locations, as per the GUI guidelines of this project.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span> <span class="o">=</span> <span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">820</span><span class="p">)</span>
+
+        <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;leaf_top.png&#39;</span><span class="p">))</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span> <span class="n">Image</span><span class="o">.</span><span class="n">ANTIALIAS</span><span class="p">)</span>
+        <span class="n">photo</span> <span class="o">=</span> <span class="n">ImageTk</span><span class="o">.</span><span class="n">PhotoImage</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_leaf_top</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">photo</span><span class="p">,</span>
+                                    <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+                                    <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_leaf_top</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_leaf_top</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Please upload an image.&#39;</span><span class="p">,</span>
+                            <span class="n">height</span><span class="o">=</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">,</span>
+                            <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Processed Image </span><span class="se">\n</span><span class="s1">Preview appears here.&#39;</span><span class="p">,</span>
+                            <span class="n">height</span><span class="o">=</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_HEIGHT</span><span class="p">,</span>
+                            <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">LeafAreaCalculatorGUI</span><span class="o">.</span><span class="n">IMAGE_WIDTH</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">photo</span>  <span class="c1"># keep a reference!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+        <span class="c1"># Pagination</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&lt;&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                  <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_left</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;0/0&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">page_label</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&gt;&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                                   <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_right</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">DISABLED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_image_name</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_image_name</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">370</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_left</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_right</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_select</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Select Image(s)&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                                    <span class="n">command</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">answer</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_select</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_area</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Compute Leaf Area&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                                  <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">process_image</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_area</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">160</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">button_area</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">DISABLED</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_area</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Leaf Area:&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_area</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">450</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">370</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span> <span class="o">=</span> <span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;NA&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="s2">&quot;&lt;Button-1&gt;&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">change_unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">show_area</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">370</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_button</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">my_frame</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Reset Workspace&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+                                   <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_workspace</span><span class="p">,</span>
+                                   <span class="n">font</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">font_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_button</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">Tk</span><span class="p">()</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Leaf Area Calculator&#39;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;820x500&quot;</span><span class="p">)</span>
+    <span class="n">root</span><span class="o">.</span><span class="n">resizable</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">leaf_compute</span> <span class="o">=</span> <span class="n">LeafAreaCalculatorGUI</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="n">root</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">pyleaf</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">pyleaf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyleaf.basefunctions.html">pyleaf.basefunctions module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../pyleaf.leaf_area_calculator_gui.html">pyleaf.leaf_area_calculator_gui module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html#usage">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html#gui-features">GUI Features</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Vishal Sonawane.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
