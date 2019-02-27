@@ -8,7 +8,7 @@ with open("LICENSE.txt", "r") as fh:
 
 setup(
     name='pyleafarea',
-    version='1.0.5',
+    version='1.0.7',
     packages=['pyleaf'],
     url='',
     license=lic,

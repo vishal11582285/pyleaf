@@ -5,8 +5,8 @@ from tkinter import ttk, messagebox
 
 from PIL import ImageTk
 
+#CHange to local .basefunctions during deployment
 from .basefunctions import *
-
 
 class LeafAreaCalculatorGUI:
     """
@@ -46,12 +46,16 @@ class LeafAreaCalculatorGUI:
         self.process_clicked = False
         self.all_results = list()
 
+
+
         self.default_image_path = os.path.dirname(__file__)
         self.default_save_path = os.path.join(os.path.dirname(__file__), 'saved_images/')
         self.was_default_set = False
 
         self.set_grid()
         self.set_menus()
+
+        self.area_red_square = int(self.set_red_square.get())
 
     def set_menus(self):
         """
@@ -192,9 +196,8 @@ class LeafAreaCalculatorGUI:
         :type every: string
         """
         print('Evrry: ', every)
-        analysis_info = PROCESS_IMAGE([every], self.default_image_path)
+        analysis_info = PROCESS_IMAGE([every], self.default_image_path, self.area_red_square)
         self.area_green_leaf = analysis_info[1]
-        self.area_red_square = 4.0
 
         print('EVery: ', every)
         self.stored_area_dict[every] = round(self.area_green_leaf, 2)
@@ -310,7 +313,7 @@ class LeafAreaCalculatorGUI:
             area = round(self.area_green_leaf, 2)
             self.show_area.config(text='{} cm\u00b2'.format(area))
         else:
-            area = round(self.area_green_leaf * 10000, 2)
+            area = round(self.area_green_leaf * 100, 2)
             self.show_area.config(text='{} mm\u00b2'.format(area))
 
     def new_winF(self):  # new window definition
@@ -472,6 +475,17 @@ class LeafAreaCalculatorGUI:
         for every in os.listdir(self.default_save_path):
             os.remove(os.path.join(self.default_save_path, every))
 
+        self.process_clicked = False
+
+    def disable_red_button(self, event):
+        """
+        Disable the Set Red Button.
+        """
+        self.set_red_label['state'] = DISABLED
+        self.set_red_square['state'] = DISABLED
+
+        self.area_red_square = int(self.set_red_square.get())
+
     def set_grid(self):
         """
         Creates a blueprint of the various GUI elements in a window of size 820x500.
@@ -541,7 +555,22 @@ class LeafAreaCalculatorGUI:
         self.reset_button = Button(self.my_frame, text='Reset Workspace', height=1, width=15,
                                    command=self.reset_workspace,
                                    font=self.font_param)
+
         self.reset_button.place(x=700, y=20)
+
+        self.set_red_label = Button(self.my_frame, text='Set Red Area:', width=12, font=self.font_param)
+        self.set_red_label.bind('<Button-1>', self.disable_red_button)
+        self.set_red_label.place(x=500, y=20)
+        self.set_red_square = Entry(self.my_frame, width=7, font=self.font_param)
+        self.set_red_square.place(x=600, y=20)
+        self.set_red_square.insert(0, '{}'.format(4))
+        # self.set_red_square.bind("<Return>", evaluate)
+        self.set_red_square_cm = Label(self.my_frame, width=3, font=self.font_param, text='cm\u00b2')
+        self.set_red_square_cm.place(x=630, y=20)
+        self.set_red_square.config(justify=LEFT)
+        # self.set_red_square.foc
+        # self.set_red_square.insert(10, '{} cm\u00b2'.format(4))
+        # entry.bind("<Return>", evaluate)
 
 
 if __name__ == '__main__':

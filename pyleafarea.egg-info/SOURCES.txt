@@ -23,7 +23,7 @@ pyleaf/limited_test_images/SF17-BE-p0019-r3_IMG_7002.JPG
 pyleaf/limited_test_images/SF17-BE-p0023-r2_IMG_7169.JPG
 pyleaf/limited_test_images/SF17-BE-p0047-r1_IMG_7922.JPG
 pyleaf/limited_test_images/SF17-BE-p0047-r3_IMG_7919.JPG
-pyleaf/saved_images/28.jpeg
+pyleaf/saved_images/33.jpeg
 pyleaf/test_images/envelope.png
 pyleaf/test_images/envelope1.png
 pyleaf/test_images/green.png

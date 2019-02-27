@@ -266,7 +266,7 @@ def RETRAIN_MODEL_FROM_SCRATCH():
     regular(string_list, class_labels_norm, finalSequence_)
 
 
-def PROCESS_IMAGE(sample_name_list, path_):
+def PROCESS_IMAGE(sample_name_list, path_, red_square):
     """
     Accept the image file name from LeafAreaCalculator and prcoess the passed image by cobverting it to model input vector and processing all pixels in the image.
     CNN model ouptput class color labels for every pixel. Simple math is then used to calculate leaf area(green pixels) from green:red ratio of all classified labels.
@@ -297,7 +297,7 @@ def PROCESS_IMAGE(sample_name_list, path_):
         if red == 0:
             continue
         green = abc[0.0] / (size)
-        area = (green * 4) / red
+        area = (green * red_square) / red
         list_of_pixels = list(map(lambda x: getPixelFromLabel(x), y_prob))
 
         im2 = Image.new("RGB", (MAX_HEIGHT, MAX_WIDTH))
