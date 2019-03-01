@@ -78,6 +78,7 @@ class LeafAreaCalculatorGUI:
 
         toolsmenu.add_separator()
         toolsmenu.add_command(label='View Recent Result', command=self.view_results)
+        toolsmenu.add_command(label='Save Recent Results As CSV', command=self.save_results)
 
         helpmenu = Menu(menu)
         menu.add_cascade(label="Help", menu=helpmenu)
@@ -293,6 +294,20 @@ class LeafAreaCalculatorGUI:
 
         Label(self.result_frame, text="", font=("Arial", 30)).grid(row=storedAreas.shape[0] + 2,
                                                                    columnspan=storedAreas.shape[1] + 2)
+
+
+    def save_results(self):
+        '''
+        Function to display the save recent results to location of user choise.
+        Displays results available in storedMeasuredValues.csv data file.
+        '''
+        import shutil
+
+        # storedAreas = pd.read_csv(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'))
+        savePath = filedialog.askdirectory(initialdir=self.default_image_path)
+
+        shutil.copy(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'), savePath)
+        messagebox.showinfo("File Saved", "Success:\n Results Location: "+savePath)
 
     def change_unit(self, event):
         """

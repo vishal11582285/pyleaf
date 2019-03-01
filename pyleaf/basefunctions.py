@@ -44,7 +44,7 @@ def CNNModel():
     model.add(MaxPooling1D(3))
     model.add(Dense(512))
     model.add(Flatten())
-    model.add(Dense(256, activation='softmax'))
+    model.add(Dense(3, activation='softmax'))
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['acc'])
@@ -231,7 +231,7 @@ def regular(string_list, class_labels_norm, finalSequence_):
     print('Training Model....', end='\n')
 
     class_labels_norm_ = np_utils.to_categorical(class_labels_norm)
-    model.fit(finalSequence_, class_labels_norm_, epochs=10, validation_split=0.1)
+    model.fit(finalSequence_, class_labels_norm_, epochs=5, validation_split=0.1)
     saveModelToDisk(model)
 
     score = model.evaluate(finalSequence_, class_labels_norm_, verbose=0)
