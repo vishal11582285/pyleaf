@@ -1,8 +1,9 @@
 from tkinter import *
 from unittest import TestCase
 
-from pyleaf.basefunctions import PROCESS_IMAGE
-from pyleaf.leaf_area_calculator_gui import LeafAreaCalculatorGUI
+from basefunctions import PROCESS_IMAGE
+from leaf_area_calculator_gui import LeafAreaCalculatorGUI
+
 
 class TestLeafAreaCalculatorGUI(TestCase):
 

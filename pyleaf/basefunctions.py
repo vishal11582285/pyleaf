@@ -39,7 +39,7 @@ def CNNModel():
     :rtype: keras.model
     """
     model = Sequential()
-    model.add(Embedding(input_dim=256, output_dim=16, input_length=4))
+    model.add(Embedding(input_dim=256, output_dim=16, input_shape=(4,), batch_size=1))
     model.add(Conv1D(16, kernel_size=2, activation='relu', strides=1))
     model.add(MaxPooling1D(3))
     model.add(Dense(512))
@@ -72,7 +72,6 @@ def alter_calc(image):
     pixels_hsv = list(map(lambda x: colorsys.rgb_to_hsv(x[0], x[1], x[2]), pixels_hsv))
     pixels_hsv = list(map(lambda x: (int(x[0] * 360), int(x[1] * 100), int(x[2] * 100)), pixels_hsv))
     return pixels_hsv
-
 
 def kerasTokenizerUnit(topbestwords):
     """
@@ -128,7 +127,7 @@ def processInputTrain():
         pixels_list.extend(pix)
         class_labels_norm.extend(generateClassLabels(size_, check))
     string_list = [[" ".join(map(str, i))] for i in pixels_list]
-    finalSequence_ = []
+    # finalSequence_ = []
     finalSequence_ = [j for i in string_list for j in tokenizer_.texts_to_sequences(i)]
     finalSequence_ = pad_sequences(finalSequence_, maxlen=4, padding='pre')
     return [string_list, class_labels_norm, finalSequence_]
@@ -191,6 +190,8 @@ def saveModelToDisk(model):
     with open(os.path.join(os.path.dirname(__file__), "model.json"), "w") as json_file:
         json_file.write(model_json)
     # serialize weights to HDF5
+
+    model.save("modelIOS.h5")
     model.save_weights("model.h5")
     print("Saved model to disk")
 
@@ -225,18 +226,21 @@ def regular(string_list, class_labels_norm, finalSequence_):
     """
     print('Reading from disk....', end='\n')
     finalSequence_ = pad_sequences(finalSequence_, maxlen=4, padding='pre')
+    # finalSequence_ = [np.array(x).reshape((4,1)) for x in finalSequence_]
     # Fit Model on Training Data. Comment out if model is saved to disk.
     print('Defining Model....', end='\n')
     model = CNNModel()
     print('Training Model....', end='\n')
 
     class_labels_norm_ = np_utils.to_categorical(class_labels_norm)
-    model.fit(finalSequence_, class_labels_norm_, epochs=5, validation_split=0.1)
+
+    model.fit(finalSequence_, class_labels_norm_, epochs=3, validation_split=0.1)
     saveModelToDisk(model)
 
     score = model.evaluate(finalSequence_, class_labels_norm_, verbose=0)
     print("The model performed with " + str(round(score[1] * 100, 2)) + " Accuracy.")
     print("The model performed with " + str(score[0]) + " Loss.")
+
 
 
 def getPixelFromLabel(label):

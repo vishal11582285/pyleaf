@@ -5,8 +5,9 @@ from tkinter import ttk, messagebox
 
 from PIL import ImageTk
 
-from .basefunctions import *
-
+#CHange to local .basefunctions during deployment
+from basefunctions import *
+from ReadBarcodes import getBarcode
 
 class LeafAreaCalculatorGUI:
     """
@@ -37,6 +38,7 @@ class LeafAreaCalculatorGUI:
         self.root = root
         self.current_page = IntVar()
         self.stored_area_dict = dict()
+        self.stored_barcode_dict = dict()
 
         self.current_image_name = None
         self.font = 'Helvetica'
@@ -46,12 +48,16 @@ class LeafAreaCalculatorGUI:
         self.process_clicked = False
         self.all_results = list()
 
+
+
         self.default_image_path = os.path.dirname(__file__)
         self.default_save_path = os.path.join(os.path.dirname(__file__), 'saved_images/')
         self.was_default_set = False
 
         self.set_grid()
         self.set_menus()
+
+        self.area_red_square = int(self.set_red_square.get())
 
     def set_menus(self):
         """
@@ -74,6 +80,7 @@ class LeafAreaCalculatorGUI:
 
         toolsmenu.add_separator()
         toolsmenu.add_command(label='View Recent Result', command=self.view_results)
+        toolsmenu.add_command(label='Save Recent Results As CSV', command=self.save_results)
 
         helpmenu = Menu(menu)
         menu.add_cascade(label="Help", menu=helpmenu)
@@ -123,6 +130,7 @@ class LeafAreaCalculatorGUI:
         originalonly = not self.process_clicked
 
         self.label_image_name['text'] = passed_image
+        self.show_barcode['text'] = self.stored_barcode_dict[passed_image]
 
         # Original Preview Pane
         image = Image.open(os.path.join(self.default_image_path, passed_image))
@@ -192,14 +200,16 @@ class LeafAreaCalculatorGUI:
         :type every: string
         """
         print('Evrry: ', every)
-        analysis_info = PROCESS_IMAGE([every], self.default_image_path)
+        analysis_info = PROCESS_IMAGE([every], self.default_image_path, self.area_red_square)
         self.area_green_leaf = analysis_info[1]
-        self.area_red_square = 4.0
 
         print('EVery: ', every)
         self.stored_area_dict[every] = round(self.area_green_leaf, 2)
 
+        self.stored_barcode_dict[every] = getBarcode(os.path.join(self.default_image_path , every))
+
         analysis_info[1] = round(analysis_info[1], 2)
+        analysis_info.append(self.stored_barcode_dict[every])
         self.all_results.append(analysis_info)
 
         # Now that image analysis is complete, load the transformed image to Label2
@@ -253,7 +263,7 @@ class LeafAreaCalculatorGUI:
                 # Save results
                 dataFrameMeasure = pd.DataFrame(self.all_results,
                                                 columns=['Sample', 'Area', 'Red Pixels', 'Red Ratio', 'Green Pixels',
-                                                         'Dimensions'])
+                                                         'Dimensions', 'BarCode'])
                 dataFrameMeasure.to_csv(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'))
             except Exception:
                 pass
@@ -291,6 +301,20 @@ class LeafAreaCalculatorGUI:
         Label(self.result_frame, text="", font=("Arial", 30)).grid(row=storedAreas.shape[0] + 2,
                                                                    columnspan=storedAreas.shape[1] + 2)
 
+
+    def save_results(self):
+        '''
+        Function to display the save recent results to location of user choise.
+        Displays results available in storedMeasuredValues.csv data file.
+        '''
+        import shutil
+
+        # storedAreas = pd.read_csv(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'))
+        savePath = filedialog.askdirectory(initialdir=self.default_image_path)
+
+        shutil.copy(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'), savePath)
+        messagebox.showinfo("File Saved", "Success:\n Results Location: "+savePath)
+
     def change_unit(self, event):
         """
         Function that allows the numerical leaf area result to switch between cm^2 and mm^2.
@@ -310,7 +334,7 @@ class LeafAreaCalculatorGUI:
             area = round(self.area_green_leaf, 2)
             self.show_area.config(text='{} cm\u00b2'.format(area))
         else:
-            area = round(self.area_green_leaf * 10000, 2)
+            area = round(self.area_green_leaf * 100, 2)
             self.show_area.config(text='{} mm\u00b2'.format(area))
 
     def new_winF(self):  # new window definition
@@ -405,6 +429,7 @@ class LeafAreaCalculatorGUI:
             every = self.current_image_name
             self.label2.after(100, self.change_result_preview, every)
             self.show_area.after(100, self.display_result)
+            self.show_barcode.after(100, self.display_barcode, every)
         else:
             self.new_winF()
             for index, every in enumerate(self.list_):
@@ -412,6 +437,13 @@ class LeafAreaCalculatorGUI:
                 self.progress.after(5000, self.change_progress)
                 self.label2.after(5000, self.change_result_preview, every)
                 self.show_area.after(5000, self.display_result)
+                self.show_barcode.after(100, self.display_barcode, every)
+
+
+    def display_barcode(self,filename):
+        self.barcode = getBarcode(os.path.join(self.default_image_path , filename))
+        self.show_barcode.config(text='{}'.format(self.barcode))
+
 
     # Ask the user to select a one or more file names.
     def answer(self, x):
@@ -471,6 +503,17 @@ class LeafAreaCalculatorGUI:
         self.stored_area_dict = dict()
         for every in os.listdir(self.default_save_path):
             os.remove(os.path.join(self.default_save_path, every))
+
+        self.process_clicked = False
+
+    def disable_red_button(self, event):
+        """
+        Disable the Set Red Button.
+        """
+        self.set_red_label['state'] = DISABLED
+        self.set_red_square['state'] = DISABLED
+
+        self.area_red_square = int(self.set_red_square.get())
 
     def set_grid(self):
         """
@@ -538,10 +581,31 @@ class LeafAreaCalculatorGUI:
         self.show_area.bind("<Button-1>", self.change_unit)
         self.show_area.place(x=600, y=370)
 
+        self.barcode_label = Label(self.my_frame, text='Barcode ID:', width=30, font=self.font_param)
+        self.barcode_label.place(x=450, y=390)
+
+        self.show_barcode = Label(self.my_frame, text='NA', width=20, font=self.font_param)
+        self.show_barcode.place(x=600, y=390)
+
         self.reset_button = Button(self.my_frame, text='Reset Workspace', height=1, width=15,
                                    command=self.reset_workspace,
                                    font=self.font_param)
+
         self.reset_button.place(x=700, y=20)
+
+        self.set_red_label = Button(self.my_frame, text='Set Red Area:', width=12, font=self.font_param)
+        self.set_red_label.bind('<Button-1>', self.disable_red_button)
+        self.set_red_label.place(x=500, y=20)
+        self.set_red_square = Entry(self.my_frame, width=7, font=self.font_param)
+        self.set_red_square.place(x=600, y=20)
+        self.set_red_square.insert(0, '{}'.format(4))
+        # self.set_red_square.bind("<Return>", evaluate)
+        self.set_red_square_cm = Label(self.my_frame, width=3, font=self.font_param, text='cm\u00b2')
+        self.set_red_square_cm.place(x=630, y=20)
+        self.set_red_square.config(justify=LEFT)
+        # self.set_red_square.foc
+        # self.set_red_square.insert(10, '{} cm\u00b2'.format(4))
+        # entry.bind("<Return>", evaluate)
 
 
 if __name__ == '__main__':
@@ -550,5 +614,7 @@ if __name__ == '__main__':
     root.geometry("820x500")
     root.resizable(False, False)
     leaf_compute = LeafAreaCalculatorGUI(root)
+
+    # leaf_compute.retrain_model()
 
     root.mainloop()

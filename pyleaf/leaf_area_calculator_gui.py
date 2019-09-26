@@ -6,7 +6,8 @@ from tkinter import ttk, messagebox
 from PIL import ImageTk
 
 #CHange to local .basefunctions during deployment
-from .basefunctions import *
+from basefunctions import *
+from ReadBarcodes import getBarcode
 
 class LeafAreaCalculatorGUI:
     """
@@ -37,6 +38,7 @@ class LeafAreaCalculatorGUI:
         self.root = root
         self.current_page = IntVar()
         self.stored_area_dict = dict()
+        self.stored_barcode_dict = dict()
 
         self.current_image_name = None
         self.font = 'Helvetica'
@@ -128,6 +130,7 @@ class LeafAreaCalculatorGUI:
         originalonly = not self.process_clicked
 
         self.label_image_name['text'] = passed_image
+        self.show_barcode['text'] = self.stored_barcode_dict[passed_image]
 
         # Original Preview Pane
         image = Image.open(os.path.join(self.default_image_path, passed_image))
@@ -203,7 +206,10 @@ class LeafAreaCalculatorGUI:
         print('EVery: ', every)
         self.stored_area_dict[every] = round(self.area_green_leaf, 2)
 
+        self.stored_barcode_dict[every] = getBarcode(os.path.join(self.default_image_path , every))
+
         analysis_info[1] = round(analysis_info[1], 2)
+        analysis_info.append(self.stored_barcode_dict[every])
         self.all_results.append(analysis_info)
 
         # Now that image analysis is complete, load the transformed image to Label2
@@ -257,7 +263,7 @@ class LeafAreaCalculatorGUI:
                 # Save results
                 dataFrameMeasure = pd.DataFrame(self.all_results,
                                                 columns=['Sample', 'Area', 'Red Pixels', 'Red Ratio', 'Green Pixels',
-                                                         'Dimensions'])
+                                                         'Dimensions', 'BarCode'])
                 dataFrameMeasure.to_csv(os.path.join(os.path.dirname(__file__), 'storedMeasuredValues.csv'))
             except Exception:
                 pass
@@ -423,6 +429,7 @@ class LeafAreaCalculatorGUI:
             every = self.current_image_name
             self.label2.after(100, self.change_result_preview, every)
             self.show_area.after(100, self.display_result)
+            self.show_barcode.after(100, self.display_barcode, every)
         else:
             self.new_winF()
             for index, every in enumerate(self.list_):
@@ -430,6 +437,13 @@ class LeafAreaCalculatorGUI:
                 self.progress.after(5000, self.change_progress)
                 self.label2.after(5000, self.change_result_preview, every)
                 self.show_area.after(5000, self.display_result)
+                self.show_barcode.after(100, self.display_barcode, every)
+
+
+    def display_barcode(self,filename):
+        self.barcode = getBarcode(os.path.join(self.default_image_path , filename))
+        self.show_barcode.config(text='{}'.format(self.barcode))
+
 
     # Ask the user to select a one or more file names.
     def answer(self, x):
@@ -566,6 +580,12 @@ class LeafAreaCalculatorGUI:
         self.show_area = Label(self.my_frame, text='NA', width=20, font=self.font_param)
         self.show_area.bind("<Button-1>", self.change_unit)
         self.show_area.place(x=600, y=370)
+
+        self.barcode_label = Label(self.my_frame, text='Barcode ID:', width=30, font=self.font_param)
+        self.barcode_label.place(x=450, y=390)
+
+        self.show_barcode = Label(self.my_frame, text='NA', width=20, font=self.font_param)
+        self.show_barcode.place(x=600, y=390)
 
         self.reset_button = Button(self.my_frame, text='Reset Workspace', height=1, width=15,
                                    command=self.reset_workspace,
