@@ -1,4 +1,5 @@
 # LeafAreaCalculator
+Updated.
 ComputerVison and Machine Learning: Convolutional Neural Network to compute leaf area
 
 This project was a free lancing project for School of Biological Science at Washington State University.
